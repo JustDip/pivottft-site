@@ -1,0 +1,211 @@
+/* ===== PivotTFT Design System ===== */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Core palette - MetaTFT professional theme */
+  --bg-primary: #151518;    /* Darkest background for main content */
+  --bg-secondary: #1b1b1e;  /* Sidebar / Header background */
+  --bg-tertiary: #222226;   /* Panel backgrounds */
+  --bg-card: #27272b;       /* Card backgrounds */
+  --bg-hover: #313136;      /* Hover states */
+  
+  /* Accent */
+  --accent-primary: #e8a75d;     /* Gold/Orange MetaTFT style */
+  --accent-secondary: #d18d45;
+  --accent-glow: rgba(232, 167, 93, 0.15);
+  --accent-gradient: linear-gradient(135deg, #e8a75d 0%, #d18d45 100%);
+  
+  /* Tier colors — Professional / TFT Academy style */
+  --tier-s: #e85d75;   /* Soft Red */
+  --tier-a: #e8a75d;   /* Soft Orange */
+  --tier-b: #e8d35d;   /* Soft Yellow */
+  --tier-c: #75c975;   /* Soft Green */
+  --tier-x: #5dc9e8;   /* Soft Cyan */
+  
+  /* Cost colors */
+  --cost-1: #8b92a5;
+  --cost-2: #45b573;
+  --cost-3: #4b9be6;
+  --cost-4: #c46be8;
+  --cost-5: #e8a75d;
+  
+  /* Text */
+  --text-primary: #f0f0f2;
+  --text-secondary: #a0a0a8;
+  --text-muted: #707078;
+  
+  /* Borders */
+  --border-default: rgba(255, 255, 255, 0.05);
+  --border-hover: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 10px var(--accent-glow);
+  
+  /* Transitions */
+  --transition-fast: 100ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-hover);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ===== Window Controls ===== */
+.app-header {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-default);
+  -webkit-app-region: drag;
+}
+
+.app-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-header .logo-icon {
+  width: 22px;
+  height: 22px;
+  background: var(--accent-gradient);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 11px;
+  color: white;
+}
+
+.app-header .logo-text {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.app-header .header-spacer {
+  flex: 1;
+}
+
+.window-controls-group {
+  display: flex;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.window-control {
+  width: 32px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+  position: relative;
+}
+
+.window-control::after {
+  content: '';
+  display: block;
+}
+
+.window-control:hover {
+  background: var(--bg-hover);
+}
+
+.window-control-minimize::after {
+  width: 10px;
+  height: 1px;
+  background: var(--text-secondary);
+}
+
+.window-control-maximize::after {
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--text-secondary);
+  border-radius: 1.5px;
+}
+
+.window-control-close:hover {
+  background: #ef4444;
+}
+
+.window-control-close::after {
+  width: 10px;
+  height: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cline x1='1' y1='1' x2='9' y2='9' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='9' y1='1' x2='1' y2='9' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: contain;
+  border: none;
+}
+
+.window-control-close:hover::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cline x1='1' y1='1' x2='9' y2='9' stroke='white' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='9' y1='1' x2='1' y2='9' stroke='white' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Riot legal disclaimer */
+.app-disclaimer {
+  padding: 10px 18px;
+  font-size: 10px;
+  line-height: 1.45;
+  color: #6b7280;
+  text-align: center;
+  border-top: 1px solid #2a2a2e;
+  background: var(--bg-secondary);
+}
+
+.widget-disclaimer {
+  padding: 4px 8px;
+  font-size: 9px;
+  color: #6b7280;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+}
