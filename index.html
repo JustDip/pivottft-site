@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PivotTFT</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; color: #333; }
+        h1 { color: #111; }
+        .description { background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .footer { font-size: 0.8em; color: #666; border-top: 1px solid #ccc; padding-top: 20px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <h1>PivotTFT</h1>
+    <p><strong>A companion app and passive overlay for Teamfight Tactics.</strong></p>
+    <div class="description">
+        <h3>About the App</h3>
+        <p>PivotTFT is a desktop companion app and passive in-game overlay designed to help Teamfight Tactics players study meta compositions, research opponents outside of active matches, and review their post-match performance to improve their gameplay.</p>
+        <p>The desktop window provides reference data including a meta comp tier list, an items cheat sheet, a static positioning board, a champions and traits reference, and a team builder. It also features a "Lobby Scouter" tool used strictly outside of an active match (for pre-game research or post-match review) to view opponent ranks and recent matches.</p>
+        <p>The desktop app includes a comprehensive Match History tab. After a match concludes, the app queries the Riot Match-V5 API to display placements, LP changes, final boards (player and opponents), augments, and traits. This is combined with local game-events captured silently during the match (via the Overwolf SDK) to provide a post-match Timeline view, Round Detail view, and Shop RNG Analysis.</p>
+        <p>To ensure competitive integrity, the in-game overlay functions solely as a passive reference tool. Users can "Pin" a meta composition in the desktop app before a match. During the game, the overlay only displays that static, pre-selected comp (target star levels, recommended carry items, static positioning, and traits). The overlay contains no live game state, no dynamic recommendations, no win-rate percentages, and no active opponent scouting.</p>
+    </div>
+    <div class="footer">
+        <p><em>PivotTFT was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.</em></p>
+    </div>
+</body>
+</html>
