@@ -112,34 +112,59 @@
 }
 
 .mh-game {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-default);
-  border-radius: 4px;
+  background: rgba(22, 24, 29, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
   overflow: hidden;
-  transition: border-color var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-.mh-game:hover { border-color: var(--border-hover); }
+.mh-game:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
 
 .mh-game-header {
   display: grid;
-  grid-template-columns: 60px 160px 1fr auto;
-  gap: 12px;
+  grid-template-columns: 70px 160px 1fr auto;
+  gap: 16px;
   align-items: center;
-  padding: 10px 14px;
+  padding: 12px 16px;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
+.mh-game-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0; width: 4px;
+  background: var(--text-muted);
+  transition: width 0.3s ease;
+}
+.mh-game:hover .mh-game-header::before { width: 6px; }
+
 .mh-game-place {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 800;
   text-align: center;
-  border-left: 4px solid var(--text-muted);
-  padding-left: 12px;
   line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  padding-left: 10px;
 }
-.mh-game-place.gold { color: var(--accent-primary); border-color: var(--accent-primary); }
-.mh-game-place.top4 { color: #2ecc71; border-color: #2ecc71; }
-.mh-game-place.bot { color: var(--text-secondary); border-color: var(--text-muted); }
+.mh-game-place.gold { color: var(--accent-primary); }
+.mh-game-place.top4 { color: #2ecc71; }
+.mh-game-place.bot { color: #8b92a5; }
+
+.mh-game-header:has(.mh-game-place.gold) { background: linear-gradient(90deg, rgba(232, 167, 93, 0.15), transparent 40%); }
+.mh-game-header:has(.mh-game-place.gold)::before { background: var(--accent-primary); box-shadow: 0 0 12px var(--accent-primary); }
+
+.mh-game-header:has(.mh-game-place.top4) { background: linear-gradient(90deg, rgba(46, 204, 113, 0.15), transparent 40%); }
+.mh-game-header:has(.mh-game-place.top4)::before { background: #2ecc71; box-shadow: 0 0 12px #2ecc71; }
+
+.mh-game-header:has(.mh-game-place.bot) { background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent 40%); }
 
 .mh-game-meta-line {
   font-size: 12.5px;

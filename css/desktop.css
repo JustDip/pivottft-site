@@ -334,33 +334,52 @@ body.desktop {
   animation: fadeInUp 0.3s ease;
 }
 
-/* Hero header */
+/* Hero header - Premium Glassmorphism */
 .pc-hero {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 24px 28px;
+  gap: 24px;
+  padding: 36px 32px;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--rank-color) 22%, transparent), transparent 65%),
-    var(--bg-secondary);
-  border-bottom: 1px solid var(--border-default);
+    linear-gradient(135deg, color-mix(in srgb, var(--rank-color) 28%, transparent), transparent 75%),
+    rgba(22, 24, 29, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.pc-hero::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.03), transparent);
+  pointer-events: none;
 }
 
 .pc-avatar {
-  width: 72px;
-  height: 72px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--rank-color), color-mix(in srgb, var(--rank-color) 50%, #1f2937));
-  border: 3px solid color-mix(in srgb, var(--rank-color) 60%, transparent);
+  background: linear-gradient(135deg, var(--rank-color), color-mix(in srgb, var(--rank-color) 40%, #111827));
+  border: 4px solid color-mix(in srgb, var(--rank-color) 70%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 800;
   color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--rank-color) 30%, transparent);
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pc-avatar:hover {
+  transform: scale(1.05) rotate(-2deg);
 }
 
 .pc-identity { flex: 1; min-width: 0; }
@@ -874,3 +893,174 @@ body.desktop {
 .place-top { color: #fbbf24; }
 .place-mid { color: #a3a3a3; }
 .place-bot { color: #ef4444; }
+
+/* ===== Enlarged Hex Board (Desktop window only) =====
+   The in-game overlay keeps its compact 40px cells (defined in ingame.css).
+   On the desktop window — Positioning tab, Team Builder, and the
+   "Positioning Example" inside comp detail panels — scale the board up so
+   the unit art and labels are legible at glance.
+
+   Aspect ratio note: the hex clip-path polygon requires height ≈ width × 1.155
+   to render as a regular hex. 64px × 74px keeps the math correct (was 64×64
+   which rendered squashed/rounded-square instead of crisp hex). */
+body.desktop .board-container {
+  padding: 16px 0;
+}
+
+body.desktop .hex-board {
+  gap: 6px;
+}
+
+body.desktop .hex-row {
+  gap: 6px;
+}
+
+body.desktop .hex-row-offset {
+  margin-left: 35px;
+}
+
+body.desktop .hex-cell {
+  width: 64px;
+  height: 74px;
+  /* Move the hex shape onto ::before so the cell itself doesn't clip the
+     star/item badges that sit outside the polygon. */
+  clip-path: none;
+  background: transparent;
+  overflow: visible;
+}
+
+body.desktop .hex-cell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: var(--bg-tertiary);
+  z-index: 0;
+}
+
+body.desktop .hex-cell > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Restore role-coloured frame on the pseudo-element */
+body.desktop .hex-cell.hex-carry::before { background: rgba(245, 158, 11, 0.6); }
+body.desktop .hex-cell.hex-tank::before { background: rgba(59, 130, 246, 0.5); }
+body.desktop .hex-cell.hex-support::before { background: rgba(34, 197, 94, 0.5); }
+body.desktop .hex-cell.hex-assassin::before { background: rgba(168, 85, 247, 0.5); }
+
+body.desktop .hex-inner {
+  width: 58px;
+  height: 67px;
+  gap: 2px;
+}
+
+body.desktop .hex-champ-label {
+  bottom: -6px;
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 5px;
+}
+
+body.desktop .hex-unit-name {
+  font-size: 12px;
+  letter-spacing: -0.3px;
+}
+
+body.desktop .hex-role-dot {
+  width: 7px;
+  height: 7px;
+  margin-top: 2px;
+}
+
+body.desktop .board-legend {
+  gap: 24px;
+  padding: 12px 0;
+  margin-top: 8px;
+}
+
+body.desktop .legend-item {
+  font-size: 12px;
+}
+
+body.desktop .legend-dot {
+  width: 10px;
+  height: 10px;
+}
+
+/* Hide the old text label under unit hexes on the desktop board — replaced
+   with stars + item icons (TFTAcademy 1:1). */
+body.desktop .hex-champ-label,
+body.desktop .hex-unit-name {
+  display: none;
+}
+
+/* Star level badge — pinned at the top of the unit hex */
+body.desktop .hex-stars {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  z-index: 4;
+  line-height: 1;
+}
+
+body.desktop .hex-stars-1 { color: #d4d4d4; }
+body.desktop .hex-stars-2 { color: #fbbf24; }
+body.desktop .hex-stars-3 { color: #fbbf24; text-shadow: 0 0 4px rgba(251, 191, 36, 0.7); }
+
+/* Item icons — 3 small squares pinned under the hex */
+body.desktop .hex-items {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1px;
+  z-index: 4;
+}
+
+body.desktop .hex-items img,
+body.desktop .hex-items .hex-item-empty {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  background: var(--bg-tertiary, #1c1c24);
+  object-fit: cover;
+  display: block;
+}
+
+/* ===== Web Mode (browser, no Overwolf) ===== */
+body.web-mode {
+  border-radius: 0;
+}
+
+body.web-mode .app-header {
+  -webkit-app-region: no-drag;
+  cursor: default;
+}
+
+body.web-mode .header-spacer {
+  -webkit-app-region: no-drag;
+}
+
+body.web-mode .app-header .logo-text::after {
+  content: ' — Web';
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-left: 6px;
+  vertical-align: middle;
+}

@@ -1,1 +1,371 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><link rel="stylesheet" href="css/general.css"/><style>#preview-banner{position:fixed;top:0;left:0;right:0;z-index:9999;padding:10px 20px;background:linear-gradient(135deg,#e8a75d 0%,#d18d45 100%);color:#1a1a1a;font:13px/1.4 "Inter",sans-serif;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.4)}#preview-banner strong{font-weight:700}#preview-banner a{font-weight:600;text-decoration:underline}body.desktop{padding-top:60px}</style><link rel="stylesheet" href="css/sidebar.css"/><link rel="stylesheet" href="css/desktop.css"/><link rel="stylesheet" href="css/ingame.css"/><link rel="stylesheet" href="css/mh.css"/><link rel="stylesheet" href="css/comp-cards.css"/><title>PivotTFT — Desktop</title><script defer="defer" src="js/desktop.js"></script></head><body class="desktop"><div id="preview-banner"><strong>PivotTFT Preview</strong> — non-functional skeleton hosted for the Riot Developer Portal review. The Match History and Players tabs require the production Riot API proxy and will not load data here. The in-game overlay isn't shown on this page; in production it's a passive comp viewer that displays a pre-pinned composition during a TFT match. <a href="https://justdip.github.io/pivottft-site/" style="color:inherit">justdip.github.io/pivottft-site</a></div><header id="header" class="app-header"><div class="logo"><div class="logo-icon">P</div><span class="logo-text">PivotTFT</span></div><div class="header-spacer"></div><div class="window-controls-group"><button id="minimizeButton" class="window-control window-control-minimize"></button> <button id="maximizeButton" class="window-control window-control-maximize"></button> <button id="closeButton" class="window-control window-control-close"></button></div></header><div class="app-layout"><aside class="sidebar"><nav class="sidebar-nav"><button class="nav-item active" data-tab="profile"><span class="nav-icon">👤</span> Profile</button><div class="nav-group" data-group="stats"><button class="nav-group-toggle" data-group-toggle="stats"><span class="nav-icon">📊</span> Stats <span class="nav-group-chevron">▾</span></button><div class="nav-group-items"><button class="nav-item nav-sub" data-tab="tierlist"><span class="nav-icon">🏆</span> Comps</button> <button class="nav-item nav-sub" data-tab="champions"><span class="nav-icon">🧙</span> Champions</button> <button class="nav-item nav-sub" data-tab="traits"><span class="nav-icon">🧬</span> Traits</button> <button class="nav-item nav-sub" data-tab="items"><span class="nav-icon">⚔️</span> Items</button> <button class="nav-item nav-sub" data-tab="augments"><span class="nav-icon">✨</span> Augments</button></div></div><div class="nav-group" data-group="tools"><button class="nav-group-toggle" data-group-toggle="tools"><span class="nav-icon">🛠️</span> Tools <span class="nav-group-chevron">▾</span></button><div class="nav-group-items"><button class="nav-item nav-sub" data-tab="teambuilder"><span class="nav-icon">🧩</span> Team Builder</button> <button class="nav-item nav-sub" data-tab="positioning"><span class="nav-icon">📐</span> Positioning Board</button></div></div><button class="nav-item" data-tab="scouter"><span class="nav-icon">🔍</span> Players</button> <button class="nav-item" data-tab="matchhistory"><span class="nav-icon">📜</span> Match History</button></nav><div style="padding: 16px; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border-default);">Set 17 — Live</div></aside><main class="content-area"><div id="tab-profile" class="tab-panel active"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 class="content-title">Welcome to PivotTFT</h2><p class="content-subtitle">Your competitive edge for Teamfight Tactics.</p></div><section id="dashboard" class="dashboard"><div id="link-card" class="dashboard-card link-card" style="display:none"><div class="link-card-content"><h2>Link Your Riot Account</h2><p>Connect your Riot ID to see your rank, recent matches, and comp performance.</p><div class="link-form"><input id="link-riot-id" class="link-input" placeholder="Name#Tag (e.g. Player#EUNE)"/> <select id="link-platform" class="link-platform"><option value="eun1" selected="selected">EUNE</option><option value="euw1">EUW</option><option value="na1">NA</option><option value="kr">KR</option></select> <button id="link-submit" class="link-submit-btn" type="button">Link Account</button></div><div id="link-error" class="link-error" style="display:none"></div></div></div><div id="dashboard-loading" class="dashboard-loading" style="display:none"><div class="dashboard-spinner"></div><span>Loading your profile...</span></div><div id="profile-wrap" class="profile-wrap" style="display:none"></div></section></div><div id="tab-tierlist" class="tab-panel"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 id="meta-title" class="content-title">TFT Team Comps</h2><p id="meta-subtitle" class="content-subtitle">A tier list of the best team compositions to play in the current meta.</p></div><div class="tierlist-toolbar"><div class="tierlist-crumb"><span class="crumb-pivot">COMPS</span><span class="crumb-sep">·</span><span class="crumb-leaf" id="tierlist-leaf">TIERLIST</span></div><div class="tierlist-controls"><input id="tierlist-search" class="tierlist-search" placeholder="Search comps, carries, traits..."/> <select id="tierlist-style-filter" class="tierlist-filter"><option value="">All play styles</option><option value="Reroll">Reroll</option><option value="Fast 8">Fast 8</option><option value="Fast 9">Fast 9</option><option value="Standard">Standard</option><option value="Flex">Flex</option></select></div></div><div class="tier-section" data-tier="s"><div class="tier-badge-block tier-s"><span class="tier-letter">S</span><span class="tier-sublabel">S TIER</span></div><div class="tier-pill"><div id="tier-s-comps" class="tier-comps-row"></div></div></div><div id="comp-detail-slot-s" class="comp-detail-slot"></div><div class="tier-section" data-tier="a"><div class="tier-badge-block tier-a"><span class="tier-letter">A</span><span class="tier-sublabel">A TIER</span></div><div class="tier-pill"><div id="tier-a-comps" class="tier-comps-row"></div></div></div><div id="comp-detail-slot-a" class="comp-detail-slot"></div><div class="tier-section" data-tier="b"><div class="tier-badge-block tier-b"><span class="tier-letter">B</span><span class="tier-sublabel">B TIER</span></div><div class="tier-pill"><div id="tier-b-comps" class="tier-comps-row"></div></div></div><div id="comp-detail-slot-b" class="comp-detail-slot"></div><div class="tier-section" data-tier="c"><div class="tier-badge-block tier-c"><span class="tier-letter">C</span><span class="tier-sublabel">C TIER</span></div><div class="tier-pill"><div id="tier-c-comps" class="tier-comps-row"></div></div></div><div id="comp-detail-slot-c" class="comp-detail-slot"></div><div class="tier-section" data-tier="x"><div class="tier-badge-block tier-x"><span class="tier-letter">X</span><span class="tier-sublabel">X TIER</span></div><div class="tier-pill tier-pill-situational"><span class="situational-label">SITUATIONAL</span><div id="tier-x-comps" class="tier-comps-row"></div></div></div><div id="comp-detail-slot-x" class="comp-detail-slot"></div></div><div id="tab-items" class="tab-panel"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 class="content-title">TFT Items Tier List</h2><p class="content-subtitle">Stats on the best items to build in TFT Set 17.</p></div><div class="items-search-bar"><input id="items-search" class="items-search-input" placeholder="Search items..."/></div><div class="items-view-toggle"><button class="view-btn active" data-view="grid">Grid</button> <button class="view-btn" data-view="list">By Carry</button></div><div id="items-grid-view" class="items-view active"><div class="crafting-grid-wrapper"><table id="crafting-grid" class="crafting-grid"></table></div></div><div id="items-list-view" class="items-view"><div id="carry-items-list"></div></div></div><div id="tab-positioning" class="tab-panel"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 class="content-title">Positioning Guides</h2><p class="content-subtitle">Optimal board placement for every meta comp.</p></div><div class="board-comp-selector"><label class="board-selector-label">Select Comp</label> <select id="board-comp-select" class="board-comp-select"></select></div><div class="board-container"><div id="hex-board" class="hex-board"></div></div><div class="board-legend"><div class="legend-item"><span class="legend-dot legend-carry"></span>Carry</div><div class="legend-item"><span class="legend-dot legend-tank"></span>Tank</div><div class="legend-item"><span class="legend-dot legend-support"></span>Support</div><div class="legend-item"><span class="legend-dot legend-assassin"></span>Assassin</div></div><div id="board-notes" class="board-notes"><p class="board-notes-text">Select a composition to see recommended positioning.</p></div></div><div id="tab-champions" class="tab-panel"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 class="content-title">Champions</h2><p class="content-subtitle">Set 17 roster grouped by cost. Click a unit for traits and best items (coming soon).</p></div><div id="champions-grid" class="champions-grid"></div></div><div id="tab-traits" class="tab-panel"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 class="content-title">Traits</h2><p class="content-subtitle">Set 17 origins and classes with their breakpoints and units.</p></div><div id="traits-list" class="traits-list"></div></div><div id="tab-augments" class="tab-panel"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 class="content-title">Augments</h2><p class="content-subtitle">Silver, Gold, and Prismatic augments. Pick rates and stats coming soon.</p></div><div class="augments-tier-toggle"><button class="view-btn active" data-augment-tier="silver">Silver</button> <button class="view-btn" data-augment-tier="gold">Gold</button> <button class="view-btn" data-augment-tier="prismatic">Prismatic</button></div><div id="augments-list" class="augments-list"><div class="placeholder-card"><h3>Augment data is coming soon</h3><p>We're wiring this up to live patch stats. For now this view is a layout-only skeleton matching the MetaTFT structure.</p></div></div></div><div id="tab-teambuilder" class="tab-panel"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 class="content-title">Team Builder</h2><p class="content-subtitle">Drag units onto the board to see active traits in real time. (Skeleton — interactivity lands next.)</p></div><div class="teambuilder-layout"><div class="teambuilder-roster"><h3 class="teambuilder-section-title">Roster</h3><div id="teambuilder-roster-grid" class="teambuilder-roster-grid"></div></div><div class="teambuilder-board-wrap"><div id="teambuilder-board" class="hex-board"></div><div class="teambuilder-traits"><h3 class="teambuilder-section-title">Active Traits</h3><div id="teambuilder-active-traits" class="teambuilder-active-traits"><span class="placeholder-text">Place units on the board to see active synergies.</span></div></div></div></div></div><div id="tab-scouter" class="tab-panel"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 class="content-title">Lobby Scouter</h2><p class="content-subtitle">Look up any player to see their rank and recent matches.</p></div><div class="scouter-search"><div class="scouter-input-row"><input id="scouter-name" class="scouter-input" placeholder="Riot ID (e.g. Player#EUNE)"/> <select id="scouter-platform" class="scouter-platform"><option value="eun1" selected="selected">EUNE</option><option value="euw1">EUW</option><option value="na1">NA</option></select> <button id="scouter-search-btn" class="scouter-btn" type="button">🔍</button></div></div><div id="scouter-loading" class="scouter-loading" style="display:none"><div class="scouter-spinner"></div><span>Loading player data...</span></div><div id="scouter-error" class="scouter-error" style="display:none"></div><div id="scouter-players" class="scouter-players"></div></div><div id="tab-matchhistory" class="tab-panel"><div class="content-header" style="margin: -24px -32px 24px -32px;"><h2 class="content-title">Match History</h2><p class="content-subtitle">Your recent ranked games. Click a match to see the full breakdown.</p></div><div class="mh-link-card" id="mh-link-card" style="display:none"><h3>Link your Riot account</h3><p>Enter your Riot ID to load your TFT match history.</p><div class="link-form"><input id="mh-riot-id" class="link-input" placeholder="Name#Tag (e.g. Player#EUNE)"/> <select id="mh-platform" class="link-platform"><option value="eun1" selected="selected">EUNE</option><option value="euw1">EUW</option><option value="na1">NA</option><option value="kr">KR</option></select> <button id="mh-link-submit" class="link-submit-btn" type="button">Load matches</button></div><div id="mh-link-error" class="link-error" style="display:none"></div></div><div id="mh-loading" class="dashboard-loading" style="display:none"><div class="dashboard-spinner"></div><span>Loading match history...</span></div><div id="mh-summary" class="mh-summary" style="display:none"><div class="mh-profile-row"><div class="mh-profile-name"><span id="mh-profile-name-text">—</span> <span class="mh-profile-tag" id="mh-profile-tag">#—</span></div><div class="mh-profile-rank" id="mh-profile-rank">—</div></div><div class="mh-stat-row"><div class="mh-stat"><span class="mh-stat-value" id="mh-avg-place">—</span><span class="mh-stat-label">Avg Place</span></div><div class="mh-stat"><span class="mh-stat-value" id="mh-top4">—</span><span class="mh-stat-label">Top 4</span></div><div class="mh-stat"><span class="mh-stat-value" id="mh-win">—</span><span class="mh-stat-label">Wins</span></div><div class="mh-stat"><span class="mh-stat-value" id="mh-games">—</span><span class="mh-stat-label">Games</span></div></div><div class="mh-recent-placements" id="mh-recent-placements"></div></div><div id="mh-games-list" class="mh-games-list"></div></div></main></div><footer class="app-disclaimer">PivotTFT was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.</footer></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="css/general.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/desktop.css" />
+  <link rel="stylesheet" href="css/ingame.css" />
+  <link rel="stylesheet" href="css/mh.css" />
+  <link rel="stylesheet" href="css/comp-cards.css" />
+  <title>PivotTFT — Desktop</title>
+<script defer src="js/desktop.js"></script></head>
+<body class="desktop">
+  <!-- Header -->
+  <header id="header" class="app-header">
+    <div class="logo">
+      <div class="logo-icon">P</div>
+      <span class="logo-text">PivotTFT</span>
+    </div>
+    <div class="header-spacer"></div>
+    <div class="window-controls-group">
+      <button id="minimizeButton" class="window-control window-control-minimize"></button>
+      <button id="maximizeButton" class="window-control window-control-maximize"></button>
+      <button id="closeButton" class="window-control window-control-close"></button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="profile">
+          <span class="nav-icon">👤</span> Profile
+        </button>
+
+        <div class="nav-group" data-group="stats">
+          <button class="nav-group-toggle" data-group-toggle="stats">
+            <span class="nav-icon">📊</span> Stats
+            <span class="nav-group-chevron">▾</span>
+          </button>
+          <div class="nav-group-items">
+            <button class="nav-item nav-sub" data-tab="tierlist">
+              <span class="nav-icon">🏆</span> Comps
+            </button>
+            <button class="nav-item nav-sub" data-tab="champions">
+              <span class="nav-icon">🧙</span> Champions
+            </button>
+            <button class="nav-item nav-sub" data-tab="traits">
+              <span class="nav-icon">🧬</span> Traits
+            </button>
+            <button class="nav-item nav-sub" data-tab="items">
+              <span class="nav-icon">⚔️</span> Items
+            </button>
+            <button class="nav-item nav-sub" data-tab="augments">
+              <span class="nav-icon">✨</span> Augments
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-group" data-group="tools">
+          <button class="nav-group-toggle" data-group-toggle="tools">
+            <span class="nav-icon">🛠️</span> Tools
+            <span class="nav-group-chevron">▾</span>
+          </button>
+          <div class="nav-group-items">
+            <button class="nav-item nav-sub" data-tab="teambuilder">
+              <span class="nav-icon">🧩</span> Team Builder
+            </button>
+            <button class="nav-item nav-sub" data-tab="positioning">
+              <span class="nav-icon">📐</span> Positioning Board
+            </button>
+          </div>
+        </div>
+
+        <button class="nav-item" data-tab="scouter">
+          <span class="nav-icon">🔍</span> Players
+        </button>
+        <button class="nav-item" data-tab="matchhistory">
+          <span class="nav-icon">📜</span> Match History
+        </button>
+        <button class="nav-item" id="nav-open-settings" type="button">
+          <span class="nav-icon">⚙️</span> Settings
+        </button>
+      </nav>
+      <div style="padding: 16px; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border-default);">
+        Set 17 — Live
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content-area">
+      
+      <!-- Profile Tab -->
+      <div id="tab-profile" class="tab-panel active">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Welcome to PivotTFT</h2>
+          <p class="content-subtitle">Your competitive edge for Teamfight Tactics.</p>
+        </div>
+
+        <section id="dashboard" class="dashboard">
+          <div id="link-card" class="dashboard-card link-card" style="display:none">
+            <div class="link-card-content">
+              <h2>Link Your Riot Account</h2>
+              <p>Connect your Riot ID to see your rank, recent matches, and comp performance.</p>
+              <div class="link-form">
+                <input type="text" id="link-riot-id" class="link-input" placeholder="Name#Tag (e.g. Player#EUNE)" />
+                <select id="link-platform" class="link-platform">
+                  <option value="eun1" selected>EUNE</option>
+                  <option value="euw1">EUW</option>
+                  <option value="na1">NA</option>
+                  <option value="kr">KR</option>
+                </select>
+                <button id="link-submit" class="link-submit-btn" type="button">Link Account</button>
+              </div>
+              <div id="link-error" class="link-error" style="display:none"></div>
+            </div>
+          </div>
+          <div id="dashboard-loading" class="dashboard-loading" style="display:none">
+            <div class="dashboard-spinner"></div>
+            <span>Loading your profile...</span>
+          </div>
+          <div id="profile-wrap" class="profile-wrap" style="display:none"></div>
+        </section>
+      </div>
+
+      <!-- Comps Tab -->
+      <div id="tab-tierlist" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 id="meta-title" class="content-title">TFT Team Comps</h2>
+          <p id="meta-subtitle" class="content-subtitle">A tier list of the best team compositions to play in the current meta.</p>
+        </div>
+
+        <div class="tierlist-toolbar">
+          <div class="tierlist-crumb"><span class="crumb-pivot">COMPS</span><span class="crumb-sep">·</span><span class="crumb-leaf" id="tierlist-leaf">TIERLIST</span></div>
+          <div class="tierlist-controls">
+            <input id="tierlist-search" class="tierlist-search" type="text" placeholder="Search comps, carries, traits..." />
+            <select id="tierlist-style-filter" class="tierlist-filter">
+              <option value="">All play styles</option>
+              <option value="Reroll">Reroll</option>
+              <option value="Fast 8">Fast 8</option>
+              <option value="Fast 9">Fast 9</option>
+              <option value="Standard">Standard</option>
+              <option value="Flex">Flex</option>
+            </select>
+          </div>
+        </div>
+        <div class="tier-section" data-tier="s">
+          <div class="tier-badge-block tier-s"><span class="tier-letter">S</span><span class="tier-sublabel">S TIER</span></div>
+          <div class="tier-pill"><div id="tier-s-comps" class="tier-comps-row"></div></div>
+        </div>
+        <div id="comp-detail-slot-s" class="comp-detail-slot"></div>
+        <div class="tier-section" data-tier="a">
+          <div class="tier-badge-block tier-a"><span class="tier-letter">A</span><span class="tier-sublabel">A TIER</span></div>
+          <div class="tier-pill"><div id="tier-a-comps" class="tier-comps-row"></div></div>
+        </div>
+        <div id="comp-detail-slot-a" class="comp-detail-slot"></div>
+        <div class="tier-section" data-tier="b">
+          <div class="tier-badge-block tier-b"><span class="tier-letter">B</span><span class="tier-sublabel">B TIER</span></div>
+          <div class="tier-pill"><div id="tier-b-comps" class="tier-comps-row"></div></div>
+        </div>
+        <div id="comp-detail-slot-b" class="comp-detail-slot"></div>
+        <div class="tier-section" data-tier="c">
+          <div class="tier-badge-block tier-c"><span class="tier-letter">C</span><span class="tier-sublabel">C TIER</span></div>
+          <div class="tier-pill"><div id="tier-c-comps" class="tier-comps-row"></div></div>
+        </div>
+        <div id="comp-detail-slot-c" class="comp-detail-slot"></div>
+        <div class="tier-section" data-tier="x">
+          <div class="tier-badge-block tier-x"><span class="tier-letter">X</span><span class="tier-sublabel">X TIER</span></div>
+          <div class="tier-pill tier-pill-situational">
+            <span class="situational-label">SITUATIONAL</span>
+            <div id="tier-x-comps" class="tier-comps-row"></div>
+          </div>
+        </div>
+        <div id="comp-detail-slot-x" class="comp-detail-slot"></div>
+      </div>
+
+      <!-- Items Tab -->
+      <div id="tab-items" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">TFT Items Tier List</h2>
+          <p class="content-subtitle">Stats on the best items to build in TFT Set 17.</p>
+        </div>
+        <div class="items-search-bar">
+          <input type="text" id="items-search" class="items-search-input" placeholder="Search items..." />
+        </div>
+        <div class="items-view-toggle">
+          <button class="view-btn active" data-view="grid">Grid</button>
+          <button class="view-btn" data-view="list">By Carry</button>
+        </div>
+        <div id="items-grid-view" class="items-view active">
+          <div class="crafting-grid-wrapper">
+            <table id="crafting-grid" class="crafting-grid"></table>
+          </div>
+        </div>
+        <div id="items-list-view" class="items-view">
+          <div id="carry-items-list"></div>
+        </div>
+      </div>
+
+      <!-- Board Tab -->
+      <div id="tab-positioning" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Positioning Guides</h2>
+          <p class="content-subtitle">Optimal board placement for every meta comp.</p>
+        </div>
+        <div class="board-comp-selector">
+          <label class="board-selector-label">Select Comp</label>
+          <select id="board-comp-select" class="board-comp-select"></select>
+        </div>
+        <div class="board-container">
+          <div id="hex-board" class="hex-board"></div>
+        </div>
+        <div class="board-legend">
+          <div class="legend-item"><span class="legend-dot legend-carry"></span>Carry</div>
+          <div class="legend-item"><span class="legend-dot legend-tank"></span>Tank</div>
+          <div class="legend-item"><span class="legend-dot legend-support"></span>Support</div>
+          <div class="legend-item"><span class="legend-dot legend-assassin"></span>Assassin</div>
+        </div>
+        <div id="board-notes" class="board-notes">
+          <p class="board-notes-text">Select a composition to see recommended positioning.</p>
+        </div>
+      </div>
+
+      <!-- Champions Tab -->
+      <div id="tab-champions" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Champions</h2>
+          <p class="content-subtitle">Set 17 roster grouped by cost. Click a unit for traits and best items (coming soon).</p>
+        </div>
+        <div id="champions-grid" class="champions-grid"></div>
+      </div>
+
+      <!-- Traits Tab -->
+      <div id="tab-traits" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Traits</h2>
+          <p class="content-subtitle">Set 17 origins and classes with their breakpoints and units.</p>
+        </div>
+        <div id="traits-list" class="traits-list"></div>
+      </div>
+
+      <!-- Augments Tab -->
+      <div id="tab-augments" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Augments</h2>
+          <p class="content-subtitle">Silver, Gold, and Prismatic augments. Pick rates and stats coming soon.</p>
+        </div>
+        <div class="augments-tier-toggle">
+          <button class="view-btn active" data-augment-tier="silver">Silver</button>
+          <button class="view-btn" data-augment-tier="gold">Gold</button>
+          <button class="view-btn" data-augment-tier="prismatic">Prismatic</button>
+        </div>
+        <div id="augments-list" class="augments-list">
+          <div class="placeholder-card">
+            <h3>Augment data is coming soon</h3>
+            <p>We're wiring this up to live patch stats. For now this view is a layout-only skeleton matching the MetaTFT structure.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Builder Tab -->
+      <div id="tab-teambuilder" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Team Builder</h2>
+          <p class="content-subtitle">Click a unit then click a hex (or drag) to place. Click an occupied hex to remove. Traits and breakpoints update live.</p>
+        </div>
+        <div class="teambuilder-layout">
+          <div class="teambuilder-roster">
+            <div class="teambuilder-section-head">
+              <h3 class="teambuilder-section-title">Roster</h3>
+            </div>
+            <div id="teambuilder-roster-grid" class="teambuilder-roster-grid"></div>
+          </div>
+          <div class="teambuilder-board-wrap">
+            <div class="teambuilder-board-head">
+              <h3 class="teambuilder-section-title">Board</h3>
+              <div class="teambuilder-board-actions">
+                <button id="teambuilder-push-btn" type="button" class="teambuilder-push-btn" title="Push current board to Riot's Team Planner (requires LoL client)">⤴ Send to LoL Team Planner</button>
+                <button id="teambuilder-clear-btn" type="button" class="teambuilder-clear-btn" title="Remove all units">Clear board</button>
+              </div>
+            </div>
+            <div id="teambuilder-board" class="hex-board"></div>
+            <div class="teambuilder-traits">
+              <h3 class="teambuilder-section-title">Active Traits</h3>
+              <div id="teambuilder-traits-panel" class="teambuilder-active-traits"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scouter Tab -->
+      <div id="tab-scouter" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Lobby Scouter</h2>
+          <p class="content-subtitle">Look up any player to see their rank and recent matches.</p>
+        </div>
+        <div class="scouter-search">
+          <div class="scouter-input-row">
+            <input type="text" id="scouter-name" class="scouter-input" placeholder="Riot ID (e.g. Player#EUNE)" />
+            <select id="scouter-platform" class="scouter-platform">
+              <option value="eun1" selected>EUNE</option>
+              <option value="euw1">EUW</option>
+              <option value="na1">NA</option>
+            </select>
+            <button id="scouter-search-btn" class="scouter-btn" type="button">🔍</button>
+          </div>
+        </div>
+        <div id="scouter-loading" class="scouter-loading" style="display:none">
+          <div class="scouter-spinner"></div>
+          <span>Loading player data...</span>
+        </div>
+        <div id="scouter-error" class="scouter-error" style="display:none"></div>
+        <div id="scouter-players" class="scouter-players"></div>
+      </div>
+
+      <!-- Match History Tab -->
+      <div id="tab-matchhistory" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Match History</h2>
+          <p class="content-subtitle">Your recent ranked games. Click a match to see the full breakdown.</p>
+        </div>
+
+        <div class="mh-link-card" id="mh-link-card" style="display:none">
+          <h3>Link your Riot account</h3>
+          <p>Enter your Riot ID to load your TFT match history.</p>
+          <div class="link-form">
+            <input type="text" id="mh-riot-id" class="link-input" placeholder="Name#Tag (e.g. Player#EUNE)" />
+            <select id="mh-platform" class="link-platform">
+              <option value="eun1" selected>EUNE</option>
+              <option value="euw1">EUW</option>
+              <option value="na1">NA</option>
+              <option value="kr">KR</option>
+            </select>
+            <button id="mh-link-submit" class="link-submit-btn" type="button">Load matches</button>
+          </div>
+          <div id="mh-link-error" class="link-error" style="display:none"></div>
+        </div>
+
+        <div id="mh-loading" class="dashboard-loading" style="display:none">
+          <div class="dashboard-spinner"></div>
+          <span>Loading match history...</span>
+        </div>
+
+        <div id="mh-summary" class="mh-summary" style="display:none">
+          <div class="mh-profile-row">
+            <div class="mh-profile-name">
+              <span id="mh-profile-name-text">—</span>
+              <span class="mh-profile-tag" id="mh-profile-tag">#—</span>
+            </div>
+            <div class="mh-profile-rank" id="mh-profile-rank">—</div>
+          </div>
+          <div class="mh-stat-row">
+            <div class="mh-stat"><span class="mh-stat-value" id="mh-avg-place">—</span><span class="mh-stat-label">Avg Place</span></div>
+            <div class="mh-stat"><span class="mh-stat-value" id="mh-top4">—</span><span class="mh-stat-label">Top 4</span></div>
+            <div class="mh-stat"><span class="mh-stat-value" id="mh-win">—</span><span class="mh-stat-label">Wins</span></div>
+            <div class="mh-stat"><span class="mh-stat-value" id="mh-games">—</span><span class="mh-stat-label">Games</span></div>
+          </div>
+          <div class="mh-recent-placements" id="mh-recent-placements"></div>
+        </div>
+
+        <div id="mh-games-list" class="mh-games-list"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <footer class="app-disclaimer">
+    PivotTFT was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
+  </footer>
+</body>
+</html>

@@ -242,43 +242,30 @@ html, body {
 
 .champions-cost-units {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
 }
 
 .champion-card {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background: var(--bg-secondary);
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-card);
   border: 1px solid var(--border-default);
-  border-radius: 4px;
-  transition: border-color var(--transition-fast);
+  border-radius: 8px;
+  transition: all var(--transition-fast);
 }
 
 .champion-card:hover {
   border-color: var(--border-hover);
+  background: var(--bg-secondary);
+  transform: translateY(-1px);
 }
 
-.champion-card-icon {
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  border-radius: 3px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.champion-card-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.champion-card .comp-hex {
+  width: 48px;
+  height: 54px;
 }
 
 .champion-card-body {
@@ -297,11 +284,20 @@ html, body {
 }
 
 .champion-card-traits {
-  font-size: 10.5px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.champion-card-traits .detail-trait-pill {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 /* ===== Traits tab ===== */
@@ -314,37 +310,116 @@ html, body {
 .trait-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-default);
+  border-left: 3px solid var(--border-default);
   border-radius: 4px;
   padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color var(--transition-fast);
+}
+
+.trait-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trait-card-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  object-fit: contain;
+  background: var(--bg-tertiary, #15151a);
+  border-radius: 4px;
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trait-card-icon-fallback {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
 }
 
 .trait-card-name {
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trait-card-active-count {
+  font-size: 12px;
   font-weight: 700;
   color: var(--accent-primary);
-  margin: 0 0 8px 0;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
 }
 
 .trait-card-units {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  margin-bottom: 8px;
 }
 
-.trait-card-unit-pill {
-  font-size: 11px;
+/* ===== Trait breakpoint pills (shared: Traits tab + Team Builder) ===== */
+.trait-bp-row,
+.tb-trait-bp-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.trait-bp,
+.tb-bp-pill {
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 22px;
   padding: 2px 6px;
-  background: var(--bg-hover);
-  border: 1px solid var(--border-default);
-  border-radius: 3px;
-  color: var(--text-secondary);
+  border-radius: 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
 }
 
-.trait-card-count {
-  font-size: 11px;
-  color: var(--text-muted);
+/* Style colors — matches Riot's trait tier convention */
+.trait-bp-bronze    { color: #c08158; border-color: rgba(192, 129, 88, 0.35); }
+.trait-bp-silver    { color: #c4cad6; border-color: rgba(196, 202, 214, 0.35); }
+.trait-bp-gold      { color: #f5b942; border-color: rgba(245, 185, 66, 0.35); }
+.trait-bp-chromatic { color: #f59ed7; border-color: rgba(245, 158, 215, 0.35); }
+.trait-bp-unique    { color: #93c4ff; border-color: rgba(147, 196, 255, 0.35); }
+
+.trait-bp.is-active,
+.tb-bp-pill.reached { opacity: 1; }
+.trait-bp.is-current,
+.tb-bp-pill.current {
+  color: #ffffff;
+  border-color: currentColor;
 }
+.trait-bp-bronze.is-current,    .tb-bp-pill.tb-bp-bronze.current    { background: #c08158; color: #1a1a1a; }
+.trait-bp-silver.is-current,    .tb-bp-pill.tb-bp-silver.current    { background: #c4cad6; color: #1a1a1a; }
+.trait-bp-gold.is-current,      .tb-bp-pill.tb-bp-gold.current      { background: #f5b942; color: #1a1a1a; }
+.trait-bp-chromatic.is-current, .tb-bp-pill.tb-bp-chromatic.current { background: #f59ed7; color: #1a1a1a; }
+.trait-bp-unique.is-current,    .tb-bp-pill.tb-bp-unique.current    { background: #93c4ff; color: #1a1a1a; }
+
+/* Active trait card border accent */
+.trait-card-active.trait-active-bronze    { border-left-color: #c08158; }
+.trait-card-active.trait-active-silver    { border-left-color: #c4cad6; }
+.trait-card-active.trait-active-gold      { border-left-color: #f5b942; }
+.trait-card-active.trait-active-chromatic { border-left-color: #f59ed7; }
+.trait-card-active.trait-active-unique    { border-left-color: #93c4ff; }
 
 /* ===== Augments tab ===== */
 .augments-tier-toggle {
@@ -474,30 +549,51 @@ html, body {
 }
 
 .teambuilder-roster-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-  gap: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   max-height: 480px;
   overflow-y: auto;
-  padding: 4px;
+  padding: 12px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-default);
-  border-radius: 4px;
+  border-radius: 8px;
+  justify-content: center;
 }
 
 .teambuilder-roster-unit {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 3px;
-  overflow: hidden;
-  cursor: pointer;
+  width: 52px;
+  height: 58px;
   position: relative;
-  border: 1px solid transparent;
-  transition: border-color var(--transition-fast);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
 }
 
 .teambuilder-roster-unit:hover {
-  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
+}
+
+.teambuilder-roster-unit .comp-hex-frame {
+  position: absolute; inset: 0;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.teambuilder-roster-unit.cost-1 .comp-hex-frame { background: var(--cost-1, #6b7280); }
+.teambuilder-roster-unit.cost-2 .comp-hex-frame { background: var(--cost-2, #1eb854); }
+.teambuilder-roster-unit.cost-3 .comp-hex-frame { background: var(--cost-3, #2f7fff); }
+.teambuilder-roster-unit.cost-4 .comp-hex-frame { background: var(--cost-4, #c44dff); }
+.teambuilder-roster-unit.cost-5 .comp-hex-frame { background: var(--cost-5, #ffb800); }
+
+.teambuilder-roster-unit .comp-hex-inner {
+  position: absolute;
+  inset: 2px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: var(--bg-tertiary, #1a1a23);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .teambuilder-roster-unit img {
@@ -506,11 +602,136 @@ html, body {
   object-fit: cover;
 }
 
+.teambuilder-roster-unit.selected {
+  transform: translateY(-3px);
+  filter: drop-shadow(0 0 8px rgba(255, 184, 0, 0.6));
+}
+
+.teambuilder-roster-unit.selected .comp-hex-inner {
+  background: rgba(255, 184, 0, 0.12);
+}
+
 .teambuilder-board-wrap {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+
+.teambuilder-board-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.teambuilder-board-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.teambuilder-clear-btn,
+.teambuilder-push-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.teambuilder-clear-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: #ef4444;
+}
+
+.teambuilder-push-btn {
+  color: #f5b942;
+  border-color: rgba(245, 185, 66, 0.35);
+}
+
+.teambuilder-push-btn:hover {
+  background: rgba(245, 185, 66, 0.12);
+  color: #ffd97a;
+  border-color: rgba(245, 185, 66, 0.7);
+}
+
+.teambuilder-push-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.detail-lcu-push-btn {
+  margin-top: 8px;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  background: rgba(245, 185, 66, 0.08);
+  border: 1px solid rgba(245, 185, 66, 0.35);
+  border-radius: 4px;
+  color: #f5b942;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.detail-lcu-push-btn:hover {
+  background: rgba(245, 185, 66, 0.18);
+  color: #ffd97a;
+}
+
+.detail-lcu-push-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+/* ===== Toast notifications (LCU feedback etc.) ===== */
+.pivottft-toast-container {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.pivottft-toast {
+  pointer-events: auto;
+  min-width: 240px;
+  max-width: 380px;
+  padding: 10px 14px;
+  background: rgba(20, 20, 28, 0.96);
+  border: 1px solid var(--border-default);
+  border-left: 3px solid var(--border-default);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateX(16px);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.pivottft-toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.pivottft-toast.hide {
+  opacity: 0;
+  transform: translateX(16px);
+}
+
+.pivottft-toast-success { border-left-color: #22c55e; }
+.pivottft-toast-error   { border-left-color: #ef4444; }
+.pivottft-toast-info    { border-left-color: #f5b942; }
 
 .teambuilder-active-traits {
   padding: 12px;
@@ -518,7 +739,121 @@ html, body {
   border: 1px solid var(--border-default);
   border-radius: 4px;
   min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
+
+.tb-traits-empty {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px;
+}
+
+.tb-traits-empty p { margin: 4px 0; }
+.tb-help { font-size: 11px; opacity: 0.7; }
+
+.tb-traits-summary {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.tb-trait-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border-radius: 4px;
+  border-left: 2px solid transparent;
+  padding-left: 8px;
+  transition: background var(--transition-fast);
+  cursor: default;
+}
+
+.tb-trait-row:hover { background: var(--bg-hover); }
+
+.tb-trait-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  object-fit: contain;
+  background: var(--bg-tertiary, #15151a);
+  border-radius: 4px;
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tb-trait-icon-fallback {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.tb-trait-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tb-trait-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tb-trait-count {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-left: auto;
+}
+
+.tb-trait-active .tb-trait-name { color: var(--text-primary); }
+.tb-trait-active.tb-trait-bronze    { border-left-color: #c08158; }
+.tb-trait-active.tb-trait-silver    { border-left-color: #c4cad6; }
+.tb-trait-active.tb-trait-gold      { border-left-color: #f5b942; }
+.tb-trait-active.tb-trait-chromatic { border-left-color: #f59ed7; }
+.tb-trait-active.tb-trait-unique    { border-left-color: #93c4ff; }
+
+.teambuilder-section-head,
+.teambuilder-board-head .teambuilder-section-title {
+  margin: 0;
+}
+
+/* Board cells — drop target highlight */
+#teambuilder-board .hex-cell.drag-over .hex-inner {
+  background: rgba(245, 185, 66, 0.2);
+  outline: 2px dashed rgba(245, 185, 66, 0.6);
+}
+
+#teambuilder-board .tb-empty .hex-inner {
+  background: var(--bg-tertiary, #15151a);
+}
+
+#teambuilder-board .tb-cell.tb-empty:hover .hex-inner {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+#teambuilder-board .hex-occupied {
+  cursor: grab;
+}
+#teambuilder-board .hex-occupied:active { cursor: grabbing; }
 
 /* ===== Skeleton placeholders ===== */
 .placeholder-card {
