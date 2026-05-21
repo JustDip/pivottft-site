@@ -67,6 +67,12 @@
             <button class="nav-item nav-sub" data-tab="tierlist">
               <span class="nav-icon">🏆</span> Comps
             </button>
+            <button class="nav-item nav-sub" data-tab="livemeta">
+              <span class="nav-icon">📈</span> Live Meta
+            </button>
+            <button class="nav-item nav-sub" data-tab="trends">
+              <span class="nav-icon">📊</span> Trends
+            </button>
             <button class="nav-item nav-sub" data-tab="champions">
               <span class="nav-icon">🧙</span> Champions
             </button>
@@ -94,6 +100,33 @@
             <button class="nav-item nav-sub" data-tab="positioning">
               <span class="nav-icon">📐</span> Positioning Board
             </button>
+            <button class="nav-item nav-sub" data-tab="aug-compare">
+              <span class="nav-icon">⚖️</span> Augment Compare
+            </button>
+            <button class="nav-item nav-sub" data-tab="complists">
+              <span class="nav-icon">📑</span> Comp Lists
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-group" data-group="reference">
+          <button class="nav-group-toggle" data-group-toggle="reference">
+            <span class="nav-icon">📚</span> Reference
+            <span class="nav-group-chevron">▾</span>
+          </button>
+          <div class="nav-group-items">
+            <button class="nav-item nav-sub" data-tab="tables">
+              <span class="nav-icon">📋</span> Tables
+            </button>
+            <button class="nav-item nav-sub" data-tab="tacticians">
+              <span class="nav-icon">🐾</span> Tacticians
+            </button>
+            <button class="nav-item nav-sub" data-tab="set17">
+              <span class="nav-icon">✨</span> Set 17 Mechanics
+            </button>
+            <button class="nav-item nav-sub" data-tab="guides">
+              <span class="nav-icon">📖</span> Guides
+            </button>
           </div>
         </div>
 
@@ -102,6 +135,9 @@
         </button>
         <button class="nav-item" data-tab="matchhistory">
           <span class="nav-icon">📜</span> Match History
+        </button>
+        <button class="nav-item" data-tab="leaderboards">
+          <span class="nav-icon">🏅</span> Leaderboards
         </button>
         <button class="nav-item" id="nav-open-settings" type="button">
           <span class="nav-icon">⚙️</span> Settings
@@ -144,6 +180,10 @@
             <div class="dashboard-spinner"></div>
             <span>Loading your profile...</span>
           </div>
+          <!-- Personal stats dashboard — auto-populates from local match history -->
+          <div id="personal-stats-slot"></div>
+          <!-- My contributed games — uploads from the SnapshotUploader opt-in flow -->
+          <div id="my-snapshots-slot"></div>
           <div id="profile-wrap" class="profile-wrap" style="display:none"></div>
         </section>
       </div>
@@ -198,6 +238,12 @@
         </div>
         <div id="comp-detail-slot-x" class="comp-detail-slot"></div>
       </div>
+
+      <!-- Live Meta Tab — populated by LiveMetaRenderer reading /stats/:table -->
+      <div id="tab-livemeta" class="tab-panel"></div>
+
+      <!-- Trends Tab — populated by TrendsRenderer reading /stats/trends -->
+      <div id="tab-trends" class="tab-panel"></div>
 
       <!-- Items Tab -->
       <div id="tab-items" class="tab-panel">
@@ -299,6 +345,8 @@
             <div class="teambuilder-board-head">
               <h3 class="teambuilder-section-title">Board</h3>
               <div class="teambuilder-board-actions">
+                <button id="teambuilder-import-btn" type="button" class="teambuilder-clear-btn" title="Paste a PivotTFT share URL to load a comp">⤵ Import URL</button>
+                <button id="teambuilder-share-btn" type="button" class="teambuilder-clear-btn" title="Copy a shareable URL of the current board">🔗 Share URL</button>
                 <button id="teambuilder-push-btn" type="button" class="teambuilder-push-btn" title="Push current board to Riot's Team Planner (requires LoL client)">⤴ Send to LoL Team Planner</button>
                 <button id="teambuilder-clear-btn" type="button" class="teambuilder-clear-btn" title="Remove all units">Clear board</button>
               </div>
@@ -315,26 +363,136 @@
       <!-- Scouter Tab -->
       <div id="tab-scouter" class="tab-panel">
         <div class="content-header" style="margin: -24px -32px 24px -32px;">
-          <h2 class="content-title">Lobby Scouter</h2>
-          <p class="content-subtitle">Look up any player to see their rank and recent matches.</p>
+          <h2 class="content-title">Players</h2>
+          <p class="content-subtitle">Review the 8-player lobby from your last TFT match — or look up any player by Riot ID.</p>
         </div>
-        <div class="scouter-search">
-          <div class="scouter-input-row">
-            <input type="text" id="scouter-name" class="scouter-input" placeholder="Riot ID (e.g. Player#EUNE)" />
-            <select id="scouter-platform" class="scouter-platform">
-              <option value="eun1" selected>EUNE</option>
-              <option value="euw1">EUW</option>
-              <option value="na1">NA</option>
-            </select>
-            <button id="scouter-search-btn" class="scouter-btn" type="button">🔍</button>
+
+        <!-- View toggle -->
+        <div class="scouter-view-toggle">
+          <button class="scouter-view-btn active" data-scouter-view="last-lobby" type="button">📜 Last lobby</button>
+          <button class="scouter-view-btn"        data-scouter-view="lookup"     type="button">🔍 Manual lookup</button>
+        </div>
+
+        <!-- LAST LOBBY view (default) -->
+        <div id="scouter-lastlobby" class="scouter-view active">
+          <div id="scouter-lastlobby-content"></div>
+        </div>
+
+        <!-- MANUAL LOOKUP view -->
+        <div id="scouter-lookup" class="scouter-view" style="display:none;">
+          <div class="scouter-search">
+            <div class="scouter-input-row">
+              <input type="text" id="scouter-name" class="scouter-input" placeholder="Riot ID (e.g. Player#EUNE)" />
+              <select id="scouter-platform" class="scouter-platform">
+                <option value="eun1" selected>EUNE</option>
+                <option value="euw1">EUW</option>
+                <option value="na1">NA</option>
+                <option value="kr">KR</option>
+                <option value="br1">BR</option>
+                <option value="jp1">JP</option>
+                <option value="oc1">OCE</option>
+                <option value="tr1">TR</option>
+                <option value="ru">RU</option>
+              </select>
+              <button id="scouter-search-btn" class="scouter-btn" type="button">Search</button>
+            </div>
           </div>
+          <div id="scouter-loading" class="scouter-loading" style="display:none">
+            <div class="scouter-spinner"></div>
+            <span>Loading player data...</span>
+          </div>
+          <div id="scouter-error" class="scouter-error" style="display:none"></div>
+          <div id="scouter-players" class="scouter-players"></div>
         </div>
-        <div id="scouter-loading" class="scouter-loading" style="display:none">
-          <div class="scouter-spinner"></div>
-          <span>Loading player data...</span>
+      </div>
+
+      <!-- Tables Tab -->
+      <div id="tab-tables" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Set 17 Reference Tables</h2>
+          <p class="content-subtitle">Game mechanic tables — encounters, shop odds, bag sizes, loot pools, augment odds.</p>
         </div>
-        <div id="scouter-error" class="scouter-error" style="display:none"></div>
-        <div id="scouter-players" class="scouter-players"></div>
+        <div id="tables-root"></div>
+      </div>
+
+      <!-- Tacticians Tab -->
+      <div id="tab-tacticians" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Tacticians (Little Legends)</h2>
+          <p class="content-subtitle">All available Tactician species with their skin variants.</p>
+        </div>
+        <div id="tacticians-root"></div>
+      </div>
+
+      <!-- Set 17 Mechanics Tab -->
+      <div id="tab-set17" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Set 17 — Mechanics</h2>
+          <p class="content-subtitle">Gods, God Augments, Blessings, Graves Upgrades, Anima Squad, Tahm Kench, Booster Packs.</p>
+        </div>
+        <div id="set17-root"></div>
+      </div>
+
+      <!-- Augment Compare Tab -->
+      <div id="tab-aug-compare" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Augment Comparison</h2>
+          <p class="content-subtitle">Pick any two augments side-by-side. Great for armory decisions.</p>
+        </div>
+        <div id="aug-compare-root"></div>
+      </div>
+
+      <!-- Comp Lists Tab -->
+      <div id="tab-complists" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Comp Lists</h2>
+          <p class="content-subtitle">Bundle your favorite curated comps into collections. Share publicly or keep private.</p>
+        </div>
+        <div id="complists-root"></div>
+      </div>
+
+      <!-- Guides Tab -->
+      <div id="tab-guides" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Guides</h2>
+          <p class="content-subtitle">Player-written guides for TFT strategy, comps, and meta analysis.</p>
+        </div>
+        <div id="guides-root"></div>
+      </div>
+
+      <!-- Leaderboards Tab -->
+      <div id="tab-leaderboards" class="tab-panel">
+        <div class="content-header" style="margin: -24px -32px 24px -32px;">
+          <h2 class="content-title">Leaderboards</h2>
+          <p class="content-subtitle">Top-ranked TFT players per region — plus the curated pro list.</p>
+        </div>
+
+        <div class="lb-toolbar">
+          <select id="lb-region" class="lb-select">
+            <option value="euw1">EUW</option>
+            <option value="eun1">EUNE</option>
+            <option value="na1">NA</option>
+            <option value="kr">KR</option>
+            <option value="br1">BR</option>
+            <option value="jp1">JP</option>
+            <option value="oc1">OCE</option>
+            <option value="tr1">TR</option>
+            <option value="ru">RU</option>
+          </select>
+          <div class="lb-tier-toggle">
+            <button class="lb-tier-btn active" data-lb-tier="challenger" type="button">Challenger</button>
+            <button class="lb-tier-btn" data-lb-tier="grandmaster" type="button">Grandmaster</button>
+            <button class="lb-tier-btn" data-lb-tier="master" type="button">Master</button>
+            <button class="lb-tier-btn" data-lb-tier="pros" type="button" title="Curated pro list">★ Pros</button>
+          </div>
+          <button id="lb-refresh" class="sc-action-btn-ghost" type="button">↻</button>
+        </div>
+
+        <div id="lb-loading" class="sc-loading" style="display:none;">
+          <div class="scouter-spinner"></div><span>Loading leaderboard…</span>
+        </div>
+        <div id="lb-error" class="sc-error-card" style="display:none;"></div>
+        <div id="lb-content"></div>
       </div>
 
       <!-- Match History Tab -->

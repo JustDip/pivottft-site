@@ -2143,6 +2143,11 @@ body.web-mode .app-header .logo-text::after {
 .ac-verdict-win { color: #4ade80; font-weight: 700; }
 .ac-verdict-tie { color: var(--text-muted); font-style: italic; }
 
+/* Web mode — hide controls that require the Overwolf app / LoL client */
+body.web-mode #teambuilder-push-btn,
+body.web-mode [data-push-comp-id],
+body.web-mode .detail-lcu-push-btn { display: none !important; }
+
 /* ===== Guides ===== */
 .gd-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .gd-item {
