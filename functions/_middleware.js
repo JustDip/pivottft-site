@@ -1,0 +1,97 @@
+// Cloudflare Pages Functions middleware — per-route SSR meta tags.
+//
+// Runs on every HTML request. Takes the static shell (index.html / 404.html)
+// and rewrites <title>, the meta description and the Open Graph / Twitter /
+// canonical tags so every route is a distinct, correctly-described, HTTP-200
+// page for search engines and link unfurls. The interactive content is still
+// hydrated client-side by the SPA bundle.
+//
+// Inert on GitHub Pages (which ignores functions/); active once the site is
+// served by Cloudflare Pages.
+
+const SITE = 'https://www.pivottft.com';
+const SUFFIX = ' | PivotTFT';
+
+// Section root → { title, desc }. Keys are the first URL segment ('' = home).
+const SECTIONS = {
+  '':                { title: 'TFT Set 17 Comp Tier List',       desc: 'The best Teamfight Tactics Set 17 team comps, ranked by live win rate and average placement.' },
+  'comps':           { title: 'TFT Set 17 Comp Tier List',       desc: 'The best Teamfight Tactics Set 17 team comps, ranked by live win rate and average placement.' },
+  'live-meta':       { title: 'TFT Set 17 Live Meta',            desc: 'The live Teamfight Tactics Set 17 meta — the comps winning right now, from real ranked games.' },
+  'trends':          { title: 'TFT Set 17 Meta Trends',          desc: 'Patch-over-patch Teamfight Tactics Set 17 trends — which comps are rising and which are falling.' },
+  'champions':       { title: 'TFT Set 17 Champions',            desc: 'Every TFT Set 17 champion — cost, traits, and live win and pick rates.' },
+  'traits':          { title: 'TFT Set 17 Traits',               desc: 'All TFT Set 17 origins and classes with their breakpoints and units.' },
+  'items':           { title: 'TFT Set 17 Items Tier List',      desc: 'The TFT Set 17 item tier list and the full crafting recipe grid.' },
+  'augments':        { title: 'TFT Set 17 Augments',             desc: 'Silver, Gold and Prismatic augments for Teamfight Tactics Set 17.' },
+  'team-builder':    { title: 'TFT Team Builder',                desc: 'Build and share TFT Set 17 boards with live trait breakpoints.' },
+  'positioning':     { title: 'TFT Positioning Guides',          desc: 'Optimal board positioning for every Teamfight Tactics Set 17 meta comp.' },
+  'augment-compare': { title: 'TFT Augment Comparison',          desc: 'Compare any two TFT Set 17 augments side by side with live placement stats.' },
+  'comp-lists':      { title: 'TFT Comp Lists',                  desc: 'Curated collections of Teamfight Tactics Set 17 comps.' },
+  'tables':          { title: 'TFT Set 17 Reference Tables',     desc: 'TFT Set 17 game data — shop odds, bag sizes, level XP, encounter and loot tables.' },
+  'tacticians':      { title: 'TFT Tacticians & Little Legends', desc: 'Browse every Teamfight Tactics Little Legend and its skin variants.' },
+  'set-17':          { title: 'TFT Set 17 Mechanics',            desc: 'TFT Set 17 mechanics — Gods, God Augments, Blessings, Anima Squad and more.' },
+  'guides':          { title: 'TFT Strategy Guides',             desc: 'Teamfight Tactics strategy guides — comps, positioning and meta analysis.' },
+  'players':         { title: 'TFT Player Lookup',               desc: 'Look up any Teamfight Tactics player — rank, recent matches and comp stats.' },
+  'match-history':   { title: 'TFT Match History',               desc: 'Your recent ranked Teamfight Tactics games with full per-match breakdowns.' },
+  'leaderboards':    { title: 'TFT Leaderboards',                desc: 'The top-ranked Teamfight Tactics players by region.' },
+};
+
+function deslug(s) {
+  return s.split('-').filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function isAppRoute(pathname) {
+  const seg = pathname.split('/').filter(Boolean)[0] || '';
+  return seg in SECTIONS;
+}
+
+function metaForPath(pathname) {
+  const parts = pathname.split('/').filter(Boolean);
+  const seg = parts[0] || '';
+
+  // Per-comp page — /comps/<slug>/
+  if (seg === 'comps' && parts[1]) {
+    const name = deslug(parts[1]);
+    return {
+      title: `${name} — TFT Set 17 Comp Guide${SUFFIX}`,
+      desc: `How to play the ${name} comp in TFT Set 17 — core units, item builds, augments, positioning and the best time to commit.`,
+      canonical: `${SITE}/comps/${parts[1]}/`,
+    };
+  }
+
+  const s = SECTIONS[seg] || SECTIONS[''];
+  return {
+    title: `${s.title}${SUFFIX}`,
+    desc: s.desc,
+    canonical: SITE + (seg ? `/${seg}/` : '/'),
+  };
+}
+
+export async function onRequest(context) {
+  const url = new URL(context.request.url);
+  const res = await context.next();
+
+  const ctype = res.headers.get('content-type') || '';
+  if (!ctype.includes('text/html')) return res;   // assets pass straight through
+
+  const meta = metaForPath(url.pathname);
+  const transformed = new HTMLRewriter()
+    .on('title',                            { element(e) { e.setInnerContent(meta.title); } })
+    .on('meta[name="description"]',         { element(e) { e.setAttribute('content', meta.desc); } })
+    .on('meta[property="og:title"]',        { element(e) { e.setAttribute('content', meta.title); } })
+    .on('meta[property="og:description"]',  { element(e) { e.setAttribute('content', meta.desc); } })
+    .on('meta[property="og:url"]',          { element(e) { e.setAttribute('content', meta.canonical); } })
+    .on('meta[name="twitter:title"]',       { element(e) { e.setAttribute('content', meta.title); } })
+    .on('meta[name="twitter:description"]', { element(e) { e.setAttribute('content', meta.desc); } })
+    .on('link[rel="canonical"]',            { element(e) { e.setAttribute('href', meta.canonical); } })
+    .transform(res);
+
+  // Deep links have no static file of their own → Pages serves 404.html (a
+  // copy of the SPA shell). Promote those to 200 so crawlers index them as
+  // real pages; genuine non-app 404s keep their 404 status.
+  if (res.status === 404 && isAppRoute(url.pathname)) {
+    return new Response(transformed.body, { status: 200, headers: transformed.headers });
+  }
+  return transformed;
+}

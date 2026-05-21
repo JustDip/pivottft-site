@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Section-level sitemap. Per-comp / per-champion URLs are added once the
+     SSR data pipeline lands (Step 3). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.pivottft.com/</loc></url>
+  <url><loc>https://www.pivottft.com/live-meta/</loc></url>
+  <url><loc>https://www.pivottft.com/trends/</loc></url>
+  <url><loc>https://www.pivottft.com/champions/</loc></url>
+  <url><loc>https://www.pivottft.com/traits/</loc></url>
+  <url><loc>https://www.pivottft.com/items/</loc></url>
+  <url><loc>https://www.pivottft.com/augments/</loc></url>
+  <url><loc>https://www.pivottft.com/team-builder/</loc></url>
+  <url><loc>https://www.pivottft.com/positioning/</loc></url>
+  <url><loc>https://www.pivottft.com/augment-compare/</loc></url>
+  <url><loc>https://www.pivottft.com/comp-lists/</loc></url>
+  <url><loc>https://www.pivottft.com/tables/</loc></url>
+  <url><loc>https://www.pivottft.com/tacticians/</loc></url>
+  <url><loc>https://www.pivottft.com/set-17/</loc></url>
+  <url><loc>https://www.pivottft.com/guides/</loc></url>
+  <url><loc>https://www.pivottft.com/players/</loc></url>
+  <url><loc>https://www.pivottft.com/leaderboards/</loc></url>
+</urlset>
