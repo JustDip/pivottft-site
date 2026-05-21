@@ -2,3 +2,6 @@
 .wrangler/
 node_modules/
 .mf/
+
+# esbuild temp output from gen-ssr-data.mjs
+*.tmp.mjs

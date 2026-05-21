@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Section-level sitemap. Per-comp / per-champion URLs are added once the
-     SSR data pipeline lands (Step 3). -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.pivottft.com/</loc></url>
   <url><loc>https://www.pivottft.com/live-meta/</loc></url>
@@ -19,4 +17,13 @@
   <url><loc>https://www.pivottft.com/guides/</loc></url>
   <url><loc>https://www.pivottft.com/players/</loc></url>
   <url><loc>https://www.pivottft.com/leaderboards/</loc></url>
+  <url><loc>https://www.pivottft.com/comps/morgana-dark-lady/</loc></url>
+  <url><loc>https://www.pivottft.com/comps/jhin-dark-star-snipers/</loc></url>
+  <url><loc>https://www.pivottft.com/comps/xayah-stargazer/</loc></url>
+  <url><loc>https://www.pivottft.com/comps/primordian-reroll/</loc></url>
+  <url><loc>https://www.pivottft.com/comps/mecha-aurelion-sol/</loc></url>
+  <url><loc>https://www.pivottft.com/comps/zed-galaxy-hunter/</loc></url>
+  <url><loc>https://www.pivottft.com/comps/psionic-pyke-reroll/</loc></url>
+  <url><loc>https://www.pivottft.com/comps/sona-commander/</loc></url>
+  <url><loc>https://www.pivottft.com/comps/anima-fiora/</loc></url>
 </urlset>

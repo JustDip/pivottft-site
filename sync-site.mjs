@@ -14,6 +14,7 @@
 
 import { readFileSync, writeFileSync, copyFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { execSync } from 'node:child_process';
 
 const DIST = join('..', 'PivotTFT', 'dist');
 
@@ -72,5 +73,7 @@ html = html.replace(/(href|src)="(css|js|img|icons)\//g, '$1="/$2/');
 
 writeFileSync('index.html', html);
 writeFileSync('404.html', html);
-
 console.log(`Synced ${copied} bundle files; wrote index.html + 404.html from ${DIST}/desktop.html`);
+
+// --- 4. Regenerate the SSR comp data + sitemap from the PivotTFT source -----
+execSync('node gen-ssr-data.mjs', { stdio: 'inherit' });
