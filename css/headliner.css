@@ -1,0 +1,84 @@
+/* Headliner countdown — small 250×250 in-game overlay */
+
+html, body { margin: 0; padding: 0; background: transparent; height: 100%; overflow: hidden; }
+
+body.hd-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #e7e7ea;
+  background: rgba(20, 20, 28, 0.88);
+  border: 2px solid rgba(245, 185, 66, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.55);
+}
+
+.hd-header {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-app-region: drag;
+}
+
+.hd-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8e8e98;
+  font-weight: 700;
+}
+
+.hd-close {
+  -webkit-app-region: no-drag;
+  background: transparent;
+  border: none;
+  color: #5a5a64;
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.hd-close:hover { color: #fff; background: rgba(255,255,255,0.06); }
+
+.hd-stage {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f5b942;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  margin-top: 18px;
+}
+
+.hd-timer {
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: 64px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  margin: 8px 0;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.55);
+}
+
+.hd-timer.hd-urgent {
+  color: #ef4444;
+  animation: hd-flash 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes hd-flash {
+  from { opacity: 1; }
+  to   { opacity: 0.45; }
+}
+
+.hd-note {
+  font-size: 11px;
+  color: #b8b8c0;
+  text-align: center;
+  max-width: 90%;
+}

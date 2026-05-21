@@ -2,14 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PivotTFT — TFT Meta Comps, Tier Lists & Stats for Set 17</title>
+  <meta name="description" content="PivotTFT is a free Teamfight Tactics companion: meta comp tier lists, champion and item stats, positioning guides, a team builder, and lobby scouting for TFT Set 17." />
+  <link rel="canonical" href="https://www.pivottft.com/" />
+  <meta name="theme-color" content="#151518" />
+
+  <!-- Icons -->
+  <link rel="icon" href="icons/desktop-icon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="img/header_icon.svg" />
+  <link rel="apple-touch-icon" href="img/cool_wolf.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="PivotTFT" />
+  <meta property="og:title" content="PivotTFT — TFT Meta Comps, Tier Lists & Stats" />
+  <meta property="og:description" content="Free Teamfight Tactics companion: meta comp tier lists, champion & item stats, positioning guides, and lobby scouting for Set 17." />
+  <meta property="og:url" content="https://www.pivottft.com/" />
+  <meta property="og:image" content="https://www.pivottft.com/img/cool_wolf.png" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="PivotTFT — TFT Meta Comps, Tier Lists & Stats" />
+  <meta name="twitter:description" content="Free Teamfight Tactics companion: meta comps, champion & item stats, positioning, and lobby scouting for Set 17." />
+  <meta name="twitter:image" content="https://www.pivottft.com/img/cool_wolf.png" />
+
   <link rel="stylesheet" href="css/general.css" />
   <link rel="stylesheet" href="css/sidebar.css" />
   <link rel="stylesheet" href="css/desktop.css" />
   <link rel="stylesheet" href="css/ingame.css" />
   <link rel="stylesheet" href="css/mh.css" />
   <link rel="stylesheet" href="css/comp-cards.css" />
-  <title>PivotTFT — Desktop</title>
-<script defer src="js/desktop.js"></script></head>
+  <script defer src="js/desktop.js"></script>
+</head>
 <body class="desktop">
   <!-- Header -->
   <header id="header" class="app-header">
@@ -225,7 +250,7 @@
       <div id="tab-champions" class="tab-panel">
         <div class="content-header" style="margin: -24px -32px 24px -32px;">
           <h2 class="content-title">Champions</h2>
-          <p class="content-subtitle">Set 17 roster grouped by cost. Click a unit for traits and best items (coming soon).</p>
+          <p class="content-subtitle">Set 17 roster grouped by cost, with live win rates and pick rates.</p>
         </div>
         <div id="champions-grid" class="champions-grid"></div>
       </div>
@@ -243,7 +268,7 @@
       <div id="tab-augments" class="tab-panel">
         <div class="content-header" style="margin: -24px -32px 24px -32px;">
           <h2 class="content-title">Augments</h2>
-          <p class="content-subtitle">Silver, Gold, and Prismatic augments. Pick rates and stats coming soon.</p>
+          <p class="content-subtitle">Silver, Gold, and Prismatic augments for TFT Set 17.</p>
         </div>
         <div class="augments-tier-toggle">
           <button class="view-btn active" data-augment-tier="silver">Silver</button>
@@ -252,8 +277,7 @@
         </div>
         <div id="augments-list" class="augments-list">
           <div class="placeholder-card">
-            <h3>Augment data is coming soon</h3>
-            <p>We're wiring this up to live patch stats. For now this view is a layout-only skeleton matching the MetaTFT structure.</p>
+            <p>Loading augments…</p>
           </div>
         </div>
       </div>

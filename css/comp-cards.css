@@ -301,10 +301,12 @@
   overflow: hidden;
 }
 
-.comp-hex-img {
+.comp-hex-img,
+.comp-hex-inner > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .comp-hex-initials {

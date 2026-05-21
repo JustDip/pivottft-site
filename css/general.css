@@ -40,6 +40,33 @@
   --border-default: rgba(255, 255, 255, 0.05);
   --border-hover: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== Light theme — applied when body has class "theme-light" ===== */
+body.theme-light {
+  --bg-primary:   #f4f4f7;
+  --bg-secondary: #ffffff;
+  --bg-tertiary:  #edeef1;
+  --bg-card:      #ffffff;
+  --bg-hover:     #e6e7eb;
+
+  --text-primary:   #1a1a22;
+  --text-secondary: #4a4a55;
+  --text-muted:     #8c8c95;
+
+  --border-default: rgba(0, 0, 0, 0.08);
+  --border-hover:   rgba(0, 0, 0, 0.16);
+  --border-strong:  rgba(0, 0, 0, 0.22);
+
+  --accent-glow: rgba(232, 167, 93, 0.25);
+}
+
+body.theme-light .lb-tier-pill { background: rgba(0,0,0,0.06); color: var(--text-primary); }
+body.theme-light .sc-empty { background: var(--bg-tertiary); border-color: var(--border-default); }
+body.theme-light .pivottft-toast { background: rgba(255,255,255,0.97); color: var(--text-primary); }
+
+:root {
+  /* Spacer to maintain valid CSS — original :root block continues below */
   
   /* Radii */
   --radius-sm: 4px;

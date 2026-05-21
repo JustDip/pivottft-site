@@ -348,3 +348,198 @@ body.admin-body {
   font-weight: 500;
 }
 .admin-btn-ghost:hover { color: #e7e7ea; background: #22222b; }
+
+
+/* ===== Admin section toggle (Comps | Guides) ===== */
+.admin-section-toggle {
+  display: flex;
+  gap: 2px;
+  padding: 8px;
+  background: #15151a;
+  border-bottom: 1px solid #2a2a32;
+}
+
+.admin-section-btn {
+  flex: 1;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #8e8e98;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 120ms;
+}
+
+.admin-section-btn:hover { color: #e7e7ea; background: #1f1f28; }
+
+.admin-section-btn.active {
+  background: rgba(245, 185, 66, 0.12);
+  color: #f5b942;
+  border-color: rgba(245, 185, 66, 0.3);
+}
+
+/* ===== Admin checkbox row ===== */
+.admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #b8b8c0;
+  font-weight: 500;
+  padding: 4px 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-checkbox input { accent-color: #f5b942; }
+
+/* ===== Guide editor split view (Markdown | Preview) ===== */
+.admin-guide-editor-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 360px;
+}
+
+.admin-guide-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+}
+
+.admin-pane-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #f5b942;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.admin-guide-md {
+  flex: 1;
+  resize: vertical;
+  min-height: 320px;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  background: #15151a;
+  border: 1px solid #2a2a32;
+  border-radius: 4px;
+  color: #e7e7ea;
+}
+
+.admin-guide-md:focus { outline: none; border-color: #f5b942; }
+
+.admin-guide-preview {
+  flex: 1;
+  padding: 12px 16px;
+  background: #15151a;
+  border: 1px solid #2a2a32;
+  border-radius: 4px;
+  overflow-y: auto;
+  min-height: 320px;
+  max-height: 600px;
+}
+
+/* Reuse gd-reader-body styles (defined in desktop.css) so the preview
+   matches what readers see. */
+.admin-guide-preview:empty::before {
+  content: 'Preview will appear here as you type…';
+  color: #5a5a64;
+  font-style: italic;
+  font-size: 12px;
+}
+
+
+/* Preview rendering — same look as the public guides reader */
+.admin-guide-preview h2 { font-size: 18px; margin: 18px 0 8px 0; color: #f0f0f2; }
+.admin-guide-preview h3 { font-size: 15px; margin: 14px 0 6px 0; color: #f0f0f2; }
+.admin-guide-preview h4 { font-size: 13px; margin: 10px 0 4px 0; color: #f5b942; }
+.admin-guide-preview h5 { font-size: 12px; margin: 8px 0 4px 0; color: #f5b942; }
+.admin-guide-preview p  { margin: 6px 0; line-height: 1.6; color: #b8b8c0; }
+.admin-guide-preview ul { padding-left: 22px; }
+.admin-guide-preview li { margin: 4px 0; color: #b8b8c0; }
+.admin-guide-preview code { background: #1a1a22; padding: 1px 6px; border-radius: 3px; font-family: 'Cascadia Code', monospace; font-size: 11px; color: #f5b942; }
+.admin-guide-preview a { color: #f5b942; text-decoration: none; }
+.admin-guide-preview a:hover { text-decoration: underline; }
+.admin-guide-preview strong { color: #fff; }
+.admin-guide-preview em { color: #cfcfd3; }
+
+/* ===== Stats aggregator panel ===== */
+.admin-stats-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+.admin-stats-actions .admin-btn { width: 100%; justify-content: center; }
+
+.admin-stats-panel {
+  padding: 20px 28px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admin-stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.admin-stat-tile {
+  background: #1a1a22;
+  border: 1px solid #2a2a32;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+.admin-stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8e8e98;
+  margin-bottom: 4px;
+}
+.admin-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f5b942;
+}
+
+.admin-stats-cohorts h3,
+.admin-stats-slices h3 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #f5b942;
+}
+
+.admin-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.admin-stats-table th,
+.admin-stats-table td {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid #22222b;
+}
+.admin-stats-table th {
+  color: #8e8e98;
+  font-weight: 600;
+  background: #1a1a22;
+  position: sticky;
+  top: 0;
+}
+.admin-stats-table tr.stale td { color: #6a6a74; }
+.admin-stats-table td .bad { color: #ef4444; font-weight: 700; }
+
+.admin-stats-lastrun .admin-help { margin: 0; }
