@@ -5,3 +5,7 @@ node_modules/
 
 # esbuild temp output from gen-ssr-data.mjs
 *.tmp.mjs
+
+# Local verification artifacts (puppeteer screenshots + ad-hoc test pages)
+.shots/
+check.html

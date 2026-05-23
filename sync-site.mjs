@@ -62,6 +62,7 @@ const HEAD = `<head>
   <link rel="stylesheet" href="/css/ingame.css" />
   <link rel="stylesheet" href="/css/mh.css" />
   <link rel="stylesheet" href="/css/comp-cards.css" />
+  <link rel="stylesheet" href="/css/mobile.css" />
   <script defer src="/js/desktop.js"></script>
 </head>`;
 

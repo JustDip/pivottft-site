@@ -33,11 +33,17 @@
   <link rel="stylesheet" href="/css/ingame.css" />
   <link rel="stylesheet" href="/css/mh.css" />
   <link rel="stylesheet" href="/css/comp-cards.css" />
+  <link rel="stylesheet" href="/css/mobile.css" />
   <script defer src="/js/desktop.js"></script>
 </head>
 <body class="desktop">
   <!-- Header -->
   <header id="header" class="app-header">
+    <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+      <span class="mobile-nav-toggle-bar"></span>
+    </button>
     <div class="logo">
       <div class="logo-icon">P</div>
       <span class="logo-text">PivotTFT</span>
@@ -51,6 +57,7 @@
   </header>
 
   <div class="app-layout">
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
     <!-- Sidebar -->
     <aside class="sidebar">
       <nav class="sidebar-nav">
