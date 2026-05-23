@@ -3157,6 +3157,9 @@ body.web-mode .detail-lcu-push-btn { display: none !important; }
   padding: 5px 8px;
   border-radius: 4px;
 }
+.items-stats-row:not(.items-stats-head) {
+  cursor: pointer;
+}
 .items-stats-row:not(.items-stats-head):hover {
   background: rgba(255, 255, 255, 0.03);
 }

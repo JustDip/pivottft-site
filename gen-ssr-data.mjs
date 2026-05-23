@@ -1,9 +1,12 @@
-// gen-ssr-data.mjs — extract comp data from the PivotTFT source for SSR.
+// gen-ssr-data.mjs — extract comp / champion / item data from the PivotTFT
+// source for SSR.
 //
-// Run from pivottft-landing/. Uses esbuild to compile the TypeScript comp
-// data module, then writes:
-//   functions/_comps.json — { slug, name, tier, playstyle, traits, desc } per comp
-//   sitemap.xml           — every section URL + every /comps/<slug>/ URL
+// Run from pivottft-landing/. Uses esbuild to compile each TypeScript data
+// module, then writes:
+//   functions/_comps.json      — { slug, name, tier, playstyle, traits, desc }
+//   functions/_champions.json  — { slug, name, cost, traits }
+//   functions/_items.json      — { slug, name, type, components, stats }
+//   sitemap.xml                — every section URL + every per-entity URL
 //
 // Slugs MUST stay identical to Router.ts (src/services/Router.ts) so the SSR
 // URLs and the client-side router agree.
@@ -14,33 +17,40 @@ import { execSync } from 'node:child_process';
 import { writeFileSync, rmSync } from 'node:fs';
 
 const SITE = 'https://www.pivottft.com';
-const TMP = '.ssr-comps.tmp.mjs';
 
-// Compile comps.ts (its only import is a type, which esbuild elides) to ESM.
-execSync(
-  `npx --yes esbuild ../PivotTFT/src/data/set17/comps.ts --bundle --format=esm --platform=node --outfile=${TMP}`,
-  { stdio: 'inherit' }
-);
-const { metaComps } = await import('./' + TMP);
-rmSync(TMP);
+function bundleModule(srcRelativePath, exportName) {
+  const tmp = `.ssr-${exportName}.tmp.mjs`;
+  execSync(
+    `npx --yes esbuild ../PivotTFT/${srcRelativePath} --bundle --format=esm --platform=node --outfile=${tmp}`,
+    { stdio: 'inherit' }
+  );
+  return tmp;
+}
 
-// --- slugify — identical rules to Router.ts ---------------------------------
+// --- shared slugify — identical rules to Router.ts -------------------------
 function slugify(s) {
   return String(s).toLowerCase().trim()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
-const used = new Set();
-function uniqueSlug(name, id) {
-  const base = slugify(name) || slugify(id);
-  let slug = base, n = 2;
-  while (used.has(slug)) slug = `${base}-${n++}`;
-  used.add(slug);
-  return slug;
+function makeUniquer() {
+  const used = new Set();
+  return (name, id) => {
+    const base = slugify(name) || slugify(id);
+    let slug = base, n = 2;
+    while (used.has(slug)) slug = `${base}-${n++}`;
+    used.add(slug);
+    return slug;
+  };
 }
 
+// --- comps -----------------------------------------------------------------
+const compsTmp = bundleModule('src/data/set17/comps.ts', 'comps');
+const { metaComps } = await import('./' + compsTmp);
+rmSync(compsTmp);
+const compUniq = makeUniquer();
 const comps = metaComps.map(c => ({
-  slug: uniqueSlug(c.name, c.id),
+  slug: compUniq(c.name, c.id),
   name: c.name,
   tier: c.tier,
   playstyle: c.playstyle,
@@ -49,6 +59,34 @@ const comps = metaComps.map(c => ({
 }));
 writeFileSync('functions/_comps.json', JSON.stringify(comps));
 
+// --- champions -------------------------------------------------------------
+const champsTmp = bundleModule('src/data/set17/champions.ts', 'champions');
+const { champions } = await import('./' + champsTmp);
+rmSync(champsTmp);
+const champUniq = makeUniquer();
+const champOut = champions.map(c => ({
+  slug: champUniq(c.name, c.id),
+  name: c.name,
+  cost: c.cost,
+  traits: c.traits || [],
+}));
+writeFileSync('functions/_champions.json', JSON.stringify(champOut));
+
+// --- items -----------------------------------------------------------------
+// Items already use a kebab-case `id` as their natural slug; Router.ts mirrors
+// this. No name-based collision suffix needed.
+const itemsTmp = bundleModule('src/data/set17/items.ts', 'items');
+const { items } = await import('./' + itemsTmp);
+rmSync(itemsTmp);
+const itemOut = items.map(i => ({
+  slug: slugify(i.id) || slugify(i.name),
+  name: i.name,
+  type: i.type || 'normal',
+  components: i.components || [],
+  stats: (i.stats || '').replace(/@[^@]+@/g, '').slice(0, 240),
+})).filter(i => i.slug);
+writeFileSync('functions/_items.json', JSON.stringify(itemOut));
+
 // --- sitemap.xml -----------------------------------------------------------
 const SECTIONS = ['', 'live-meta', 'trends', 'champions', 'traits', 'items',
   'augments', 'team-builder', 'positioning', 'augment-compare', 'comp-lists',
@@ -56,6 +94,8 @@ const SECTIONS = ['', 'live-meta', 'trends', 'champions', 'traits', 'items',
 const urls = [
   ...SECTIONS.map(s => SITE + (s ? `/${s}/` : '/')),
   ...comps.map(c => `${SITE}/comps/${c.slug}/`),
+  ...champOut.map(c => `${SITE}/champions/${c.slug}/`),
+  ...itemOut.map(i => `${SITE}/items/${i.slug}/`),
 ];
 writeFileSync('sitemap.xml',
   `<?xml version="1.0" encoding="UTF-8"?>\n` +
@@ -64,4 +104,6 @@ writeFileSync('sitemap.xml',
   `\n</urlset>\n`
 );
 
-console.log(`SSR data: ${comps.length} comps -> functions/_comps.json; sitemap.xml has ${urls.length} URLs.`);
+console.log(
+  `SSR data: ${comps.length} comps, ${champOut.length} champions, ${itemOut.length} items; sitemap.xml has ${urls.length} URLs.`
+);
