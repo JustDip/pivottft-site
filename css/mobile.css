@@ -387,6 +387,26 @@ body.mobile-nav-open .mobile-nav-backdrop {
   body.web-mode .cr-carry { width: 40px; height: 46px; }
   body.web-mode .cr-playstyle { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+  /* Positioning board: the desktop hex grid (5 cells × 64px wide, plus a 35px
+     stagger offset on every other row) measures ~379px which overflows a
+     360px phone viewport. Scale every dimension down ~30% so the 5×4 board
+     fits inside the tab-panel padding. The selectors all use the existing
+     `body.desktop .hex-*` form from desktop.css — we keep that prefix so the
+     specificity beats the desktop rule, and the rules only apply at ≤480px. */
+  body.desktop.web-mode .hex-cell {
+    width: 44px;
+    height: 51px;
+  }
+  body.desktop.web-mode .hex-inner {
+    width: 40px;
+    height: 47px;
+  }
+  body.desktop.web-mode .hex-row { gap: 4px; }
+  body.desktop.web-mode .hex-board { gap: 4px; }
+  body.desktop.web-mode .hex-row-offset { margin-left: 24px; }
+  body.desktop.web-mode .hex-champ-label { font-size: 8px; padding: 1px 4px; }
+  body.desktop.web-mode .hex-unit-name { font-size: 9px; }
+
   /* Phone: stack the tier badge ON TOP of its rows instead of beside. The
      side-by-side layout doesn't have room for the row content alongside even
      a 56px badge. As a horizontal pill header it doubles as a clear section
