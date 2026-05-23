@@ -1212,7 +1212,7 @@ body.in-game {
   gap: 10px;
 }
 
-/* ===== Rich Player Card (tactics.tools-style) ===== */
+/* ===== Rich Player Card ===== */
 .player-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-default);

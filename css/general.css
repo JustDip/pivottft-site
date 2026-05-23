@@ -4,7 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Core palette - MetaTFT professional theme */
+  /* Core palette — professional dark theme */
   --bg-primary: #151518;    /* Darkest background for main content */
   --bg-secondary: #1b1b1e;  /* Sidebar / Header background */
   --bg-tertiary: #222226;   /* Panel backgrounds */
@@ -12,7 +12,7 @@
   --bg-hover: #313136;      /* Hover states */
   
   /* Accent */
-  --accent-primary: #e8a75d;     /* Gold/Orange MetaTFT style */
+  --accent-primary: #e8a75d;     /* Gold/Orange accent */
   --accent-secondary: #d18d45;
   --accent-glow: rgba(232, 167, 93, 0.15);
   --accent-gradient: linear-gradient(135deg, #e8a75d 0%, #d18d45 100%);

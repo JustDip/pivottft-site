@@ -2487,7 +2487,7 @@ body.web-mode .detail-lcu-push-btn { display: none !important; }
 .dls-stat-val.bad  { color: #f87171; }
 .dls-stat-lbl { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 3px; }
 
-/* ===== MetaTFT-style comp rows (live-tiered) ===== */
+/* ===== Live-tiered comp rows ===== */
 
 /* Each tier-comps-row is now a vertical stack of comp rows, not a grid. */
 .tier-comps-row {
@@ -2710,7 +2710,7 @@ body.web-mode .detail-lcu-push-btn { display: none !important; }
   .prog-levels-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* ===== Live Meta — Comps sub-tab as MetaTFT-style cards ===== */
+/* ===== Live Meta — Comps sub-tab cards ===== */
 
 .lm-comps-meta {
   font-size: 11px; color: var(--text-muted);
