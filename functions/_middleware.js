@@ -33,6 +33,7 @@ const SECTIONS = {
   'team-builder':    { title: 'TFT Team Builder',                desc: 'Build and share TFT Set 17 boards with live trait breakpoints.' },
   'positioning':     { title: 'TFT Positioning Guides',          desc: 'Optimal board positioning for every Teamfight Tactics Set 17 meta comp.' },
   'augment-compare': { title: 'TFT Augment Comparison',          desc: 'Compare any two TFT Set 17 augments side by side with live placement stats.' },
+  'loaded-dice':     { title: 'TFT Loaded Dice — Shop Odds Calculator', desc: 'TFT shop probability calculator: per-champion hit rates, expected gold to a 2-star, and the official Set 17 shop odds table by level.' },
   'comp-lists':      { title: 'TFT Comp Lists',                  desc: 'Curated collections of Teamfight Tactics Set 17 comps.' },
   'tables':          { title: 'TFT Set 17 Reference Tables',     desc: 'TFT Set 17 game data — shop odds, bag sizes, level XP, encounter and loot tables.' },
   'tacticians':      { title: 'TFT Tacticians & Little Legends', desc: 'Browse every Teamfight Tactics Little Legend and its skin variants.' },
