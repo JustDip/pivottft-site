@@ -90,8 +90,8 @@ writeFileSync('functions/_items.json', JSON.stringify(itemOut));
 // --- sitemap.xml -----------------------------------------------------------
 const SECTIONS = ['', 'live-meta', 'trends', 'champions', 'traits', 'items',
   'augments', 'team-builder', 'positioning', 'augment-compare', 'loaded-dice',
-  'comp-lists', 'tables', 'tacticians', 'set-17', 'guides', 'players',
-  'leaderboards'];
+  'fortune-calculator', 'comp-lists', 'tables', 'tacticians', 'set-17',
+  'guides', 'players', 'leaderboards'];
 const urls = [
   ...SECTIONS.map(s => SITE + (s ? `/${s}/` : '/')),
   ...comps.map(c => `${SITE}/comps/${c.slug}/`),

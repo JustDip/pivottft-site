@@ -989,7 +989,7 @@ body.desktop .legend-dot {
 }
 
 /* Hide the old text label under unit hexes on the desktop board — replaced
-   with stars + item icons (TFTAcademy 1:1). */
+   with stars + item icons. */
 body.desktop .hex-champ-label,
 body.desktop .hex-unit-name {
   display: none;
@@ -3678,3 +3678,396 @@ body.web-mode .detail-lcu-push-btn { display: none !important; }
 }
 .lm-carry-hex .comp-hex-frame,
 .lm-carry-hex .comp-hex-inner { width: 100%; height: 100%; }
+
+/* ===== Loaded Dice — Shop Odds Calculator (Tools tab) ====================== */
+.ld-section {
+  background: var(--surface-1, #1a1a1f);
+  border: 1px solid var(--border-default, #2a2a32);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+.ld-section-head { margin: 0 0 14px; }
+.ld-section-head .ld-h {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #f0f0f0);
+}
+.ld-section-head .ld-sub {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted, #888);
+}
+
+.ld-level-row {
+  display: grid;
+  grid-template-columns: auto 80px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.ld-level-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary, #ccc);
+}
+.ld-select {
+  background: var(--surface-2, #24242b);
+  border: 1px solid var(--border-default, #2a2a32);
+  color: var(--text-primary, #f0f0f0);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.ld-select:focus { outline: 2px solid var(--accent, #4d8eff); outline-offset: 1px; }
+.ld-select-wide { min-width: 260px; }
+
+.ld-odds-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ld-bar-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 44px;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+}
+.ld-bar-label { color: var(--text-secondary, #ccc); font-weight: 600; }
+.ld-bar-track {
+  background: var(--surface-2, #24242b);
+  border-radius: 4px;
+  height: 12px;
+  overflow: hidden;
+}
+.ld-bar-fill { height: 100%; transition: width 200ms ease; }
+.ld-bar-cost-1 { background: #888; }
+.ld-bar-cost-2 { background: #1ad36b; }
+.ld-bar-cost-3 { background: #2ea1f8; }
+.ld-bar-cost-4 { background: #c544ff; }
+.ld-bar-cost-5 { background: #ffb71b; }
+.ld-bar-val { font-variant-numeric: tabular-nums; text-align: right; color: var(--text-primary, #f0f0f0); }
+
+.ld-fulltable {
+  margin-top: 14px;
+  font-size: 12px;
+}
+.ld-fulltable > summary {
+  cursor: pointer;
+  color: var(--text-muted, #888);
+  padding: 6px 0;
+  user-select: none;
+}
+.ld-fulltable > summary:hover { color: var(--text-secondary, #ccc); }
+
+.ld-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.ld-table th, .ld-table td {
+  padding: 6px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--border-subtle, #22222a);
+}
+.ld-table thead th {
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-secondary, #ccc);
+  background: var(--surface-2, #24242b);
+}
+.ld-table th:first-child, .ld-table td:first-child { text-align: left; }
+.ld-table tbody th { color: var(--text-secondary, #ccc); font-weight: 600; }
+.ld-table .ld-zero { color: var(--text-muted, #666); }
+.ld-table .ld-row-active {
+  background: rgba(77, 142, 255, 0.10);
+}
+.ld-table .ld-row-active th, .ld-table .ld-row-active td {
+  color: var(--text-primary, #fff);
+}
+
+.ld-pool-table tbody td { font-variant-numeric: tabular-nums; }
+
+.ld-calc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+.ld-field { display: flex; flex-direction: column; gap: 4px; }
+.ld-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ld-num {
+  background: var(--surface-2, #24242b);
+  border: 1px solid var(--border-default, #2a2a32);
+  color: var(--text-primary, #f0f0f0);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  width: 100%;
+}
+.ld-num:focus { outline: 2px solid var(--accent, #4d8eff); outline-offset: 1px; }
+
+.ld-result {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle, #22222a);
+}
+.ld-result-empty {
+  color: var(--text-muted, #888);
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+}
+.ld-result-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.ld-result-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+.ld-result-name strong {
+  font-size: 16px;
+  color: var(--text-primary, #f0f0f0);
+  margin-right: 8px;
+}
+.ld-result-cost {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.ld-cost-1 { background: #555; color: #fff; }
+.ld-cost-2 { background: #1ad36b; color: #000; }
+.ld-cost-3 { background: #2ea1f8; color: #fff; }
+.ld-cost-4 { background: #c544ff; color: #fff; }
+.ld-cost-5 { background: #ffb71b; color: #000; }
+.ld-result-traits {
+  font-size: 12px;
+  color: var(--text-muted, #888);
+}
+
+.ld-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+.ld-stat {
+  background: var(--surface-2, #24242b);
+  border: 1px solid var(--border-subtle, #22222a);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ld-stat-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary, #f0f0f0);
+  font-variant-numeric: tabular-nums;
+}
+.ld-stat-lbl {
+  font-size: 10px;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ld-verdict {
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+.ld-verdict-good { background: rgba(26, 211, 107, 0.15); color: #1ad36b; }
+.ld-verdict-ok   { background: rgba(46, 161, 248, 0.15); color: #2ea1f8; }
+.ld-verdict-warn { background: rgba(255, 183, 27, 0.15); color: #ffb71b; }
+.ld-verdict-bad  { background: rgba(255, 80, 80, 0.15);  color: #ff8080; }
+
+@media (max-width: 600px) {
+  .ld-level-row { grid-template-columns: 1fr; }
+  .ld-select-wide { min-width: 0; }
+}
+
+/* ===== Fortune Calculator — Economy Planner (Tools tab) ===================== */
+.fc-section {
+  background: var(--surface-1, #1a1a1f);
+  border: 1px solid var(--border-default, #2a2a32);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+.fc-section-head { margin: 0 0 14px; }
+.fc-section-head .fc-h {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #f0f0f0);
+}
+.fc-section-head .fc-sub {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted, #888);
+}
+
+.fc-input-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+.fc-field { display: flex; flex-direction: column; gap: 4px; }
+.fc-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.fc-num, .fc-select {
+  background: var(--surface-2, #24242b);
+  border: 1px solid var(--border-default, #2a2a32);
+  color: var(--text-primary, #f0f0f0);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  width: 100%;
+}
+.fc-num:focus, .fc-select:focus { outline: 2px solid var(--accent, #4d8eff); outline-offset: 1px; }
+
+.fc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.fc-table th, .fc-table td {
+  padding: 8px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--border-subtle, #22222a);
+}
+.fc-table th:first-child, .fc-table td:first-child { text-align: left; }
+.fc-table thead th {
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--surface-2, #24242b);
+}
+.fc-streak-cell { font-weight: 600; }
+.fc-streak-win  { color: #1ad36b; }
+.fc-streak-loss { color: #ff8080; }
+.fc-bank {
+  font-weight: 700;
+  color: var(--text-primary, #f0f0f0);
+}
+
+.fc-summary {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--surface-2, #24242b);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-secondary, #ccc);
+}
+.fc-summary strong { color: var(--text-primary, #f0f0f0); }
+
+.fc-break-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.fc-break-card {
+  background: var(--surface-2, #24242b);
+  border: 1px solid var(--border-subtle, #22222a);
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fc-break-label {
+  font-size: 11px;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+.fc-break-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary, #f0f0f0);
+  font-variant-numeric: tabular-nums;
+}
+.fc-break-sub {
+  font-size: 12px;
+  color: var(--text-muted, #888);
+}
+
+.fc-verdict {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+.fc-verdict-good { background: rgba(26, 211, 107, 0.15); color: #1ad36b; }
+.fc-verdict-tie  { background: rgba(46, 161, 248, 0.15); color: #2ea1f8; }
+.fc-verdict-warn { background: rgba(255, 183, 27, 0.15); color: #ffb71b; }
+
+.fc-ref-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.fc-ref-card {
+  background: var(--surface-2, #24242b);
+  border: 1px solid var(--border-subtle, #22222a);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+.fc-ref-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.fc-ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.fc-ref-table th, .fc-ref-table td {
+  padding: 4px 6px;
+  text-align: left;
+  color: var(--text-secondary, #ccc);
+}
+.fc-ref-table td:last-child { text-align: right; color: var(--text-primary, #f0f0f0); font-weight: 600; }
+.fc-ref-table tr + tr th, .fc-ref-table tr + tr td { border-top: 1px solid var(--border-subtle, #22222a); }
+
+@media (max-width: 600px) {
+  .fc-break-grid { grid-template-columns: 1fr; }
+}
