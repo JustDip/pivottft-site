@@ -9,3 +9,8 @@ node_modules/
 # Local verification artifacts (puppeteer screenshots + ad-hoc test pages)
 .shots/
 check.html
+
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
