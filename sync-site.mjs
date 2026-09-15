@@ -56,10 +56,12 @@ const HEAD = `<head>
   <meta name="twitter:description" content="Free Teamfight Tactics companion: meta comps, champion & item stats, positioning, and lobby scouting for Set 17." />
   <meta name="twitter:image" content="https://www.pivottft.com/img/cool_wolf.png" />
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="/css/general.css" />
   <link rel="stylesheet" href="/css/sidebar.css" />
-  <link rel="stylesheet" href="/css/desktop.css" />
   <link rel="stylesheet" href="/css/ingame.css" />
+  <link rel="stylesheet" href="/css/desktop.css" />
   <link rel="stylesheet" href="/css/mh.css" />
   <link rel="stylesheet" href="/css/comp-cards.css" />
   <link rel="stylesheet" href="/css/mobile.css" />
