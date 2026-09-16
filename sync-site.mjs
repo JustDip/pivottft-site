@@ -11,9 +11,11 @@
 // Per-comp titles, descriptions and the sitemap are rendered by the server
 // (proxy/node/site.mjs) from the comps database — nothing to generate here.
 //
-//   node sync-site.mjs            # ADS=1 node sync-site.mjs → body.ads-on
+//   node sync-site.mjs
+//   ADS=1 ADSENSE_CLIENT=ca-pub-… ADSENSE_SLOT_INDEX_FOOT=… ADSENSE_SLOT_STUDY_FOOT=… \
+//     ADSENSE_SLOT_INDEX_MID=… node sync-site.mjs     # ads on: loader + unit ids + ads.txt
 
-import { readFileSync, writeFileSync, copyFileSync, readdirSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, copyFileSync, readdirSync, mkdirSync, existsSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 
 const DIST = join('..', 'PivotTFT', 'dist');
@@ -30,6 +32,29 @@ for (const sub of ['js', 'css']) {
     copied++;
   }
 }
+
+// Body classes the site is born with: web-mode hides the app-only chrome
+// before any script runs; ads-on shows the reserved slots once a network is
+// wired (ADS=1 at build time).
+const ADS = process.env.ADS === '1';
+const BODY_CLASSES = ['desktop', 'web-mode', ...(ADS ? ['ads-on'] : [])].join(' ');
+
+// AdSense wiring — only with ADS=1, and only with a publisher id. Slot ids
+// come from the AdSense "ad units" page; a missing slot leaves that unit
+// empty (its reserved height still holds the layout).
+const ADSENSE_CLIENT = process.env.ADSENSE_CLIENT || '';
+if (ADS && !/^ca-pub-\d{10,20}$/.test(ADSENSE_CLIENT)) {
+  console.error('ADS=1 needs ADSENSE_CLIENT=ca-pub-<id> (from the AdSense account)');
+  process.exit(1);
+}
+const ADSENSE_SLOTS = {
+  'index-mid':  process.env.ADSENSE_SLOT_INDEX_MID  || '',
+  'index-foot': process.env.ADSENSE_SLOT_INDEX_FOOT || '',
+  'study-foot': process.env.ADSENSE_SLOT_STUDY_FOOT || '',
+};
+const ADS_LOADER = ADS
+  ? `  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}" crossorigin="anonymous"></script>\n`
+  : '';
 
 // --- 2. Public SEO <head> --------------------------------------------------
 const HEAD = `<head>
@@ -68,21 +93,30 @@ const HEAD = `<head>
   <link rel="stylesheet" href="/css/mh.css" />
   <link rel="stylesheet" href="/css/comp-cards.css" />
   <link rel="stylesheet" href="/css/mobile.css" />
-  <script defer src="/js/desktop.js"></script>
+${ADS_LOADER}  <script defer src="/js/desktop.js"></script>
 </head>`;
 
-// Body classes the site is born with: web-mode hides the app-only chrome
-// before any script runs; ads-on shows the reserved slots once a network is
-// wired (ADS=1 at build time).
-const BODY_CLASSES = ['desktop', 'web-mode', ...(process.env.ADS === '1' ? ['ads-on'] : [])].join(' ');
 
 // --- 3. Transform desktop.html → index.html + 404.html ---------------------
 let html = readFileSync(join(DIST, 'desktop.html'), 'utf8');
 html = html.replace(/<head>[\s\S]*?<\/head>/, HEAD);
 html = html.replace(/<body class="desktop">/, `<body class="${BODY_CLASSES}">`);
+// Fill the AdSense unit ids per slot (left empty in the app build).
+html = html.replace(/<div class="ad-slot" data-slot="([a-z-]+)"([^>]*)>([\s\S]*?)<ins class="adsbygoogle" data-ad-client="" data-ad-slot=""/g,
+  (m, slot, attrs, inner) => ADS
+    ? `<div class="ad-slot" data-slot="${slot}"${attrs}>${inner}<ins class="adsbygoogle" data-ad-client="${ADSENSE_CLIENT}" data-ad-slot="${ADSENSE_SLOTS[slot] || ''}"`
+    : m);
+// Ads off: no inert <ins> tags in the shipped shell.
+if (!ADS) html = html.replace(/<ins class="adsbygoogle"[^>]*><\/ins>/g, '');
 // Absolute asset paths (safety net — the body carries no relative asset refs).
 html = html.replace(/(href|src)="(css|js|img|icons)\//g, '$1="/$2/');
 
 writeFileSync('index.html', html);
 writeFileSync('404.html', html);
+// ads.txt tells buyers which publisher id may sell this site's inventory.
+if (ADS) {
+  writeFileSync('ads.txt', `google.com, ${ADSENSE_CLIENT.replace(/^ca-/, '')}, DIRECT, f08c47fec0942fa0\n`);
+} else if (existsSync('ads.txt')) {
+  unlinkSync('ads.txt');
+}
 console.log(`Synced ${copied} bundle files; wrote index.html + 404.html from ${DIST}/desktop.html`);

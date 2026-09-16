@@ -1182,3 +1182,37 @@ body.ads-on .ad-slot {
 .tier-section[hidden],
 .index-head[hidden],
 .index-empty[hidden] { display: none !important; }
+
+/* ---- Prose pages (Privacy): the study's grammar for running text ---- */
+.prose {
+  max-width: 68ch;
+}
+.prose-section {
+  padding: 0 0 var(--sp-5);
+}
+.prose p {
+  margin: 0 0 var(--sp-3);
+  font-size: var(--fs-14);
+  line-height: var(--lh-body);
+  color: var(--ink-secondary);
+}
+.prose p:last-child { margin-bottom: 0; }
+.prose a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--transition-fast);
+}
+.prose a:hover { text-decoration-color: var(--mark); }
+.prose code {
+  font-family: inherit;
+  font-style: italic;
+}
+.footer-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 3px;
+}
+.footer-link:hover { color: var(--ink); text-decoration-color: var(--mark); }

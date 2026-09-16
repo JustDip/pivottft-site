@@ -102,7 +102,7 @@
               <div class="tier-badge-block tier-s"><span class="tier-letter">S</span><span class="tier-sublabel">Excellent</span></div>
               <div class="tier-pill"><div id="tier-s-comps" class="tier-comps-row"></div></div>
             </div>
-            <div class="ad-slot" data-slot="index-mid" data-size="320x100" aria-hidden="true"><span class="ad-slot-label">Advertisement</span><div class="ad-slot-unit"></div></div>
+            <div class="ad-slot" data-slot="index-mid" data-size="320x100" data-web-only aria-hidden="true"><span class="ad-slot-label">Advertisement</span><div class="ad-slot-unit"></div></div>
             <div class="tier-section" data-tier="a">
               <div class="tier-badge-block tier-a"><span class="tier-letter">A</span><span class="tier-sublabel">Strong</span></div>
               <div class="tier-pill"><div id="tier-a-comps" class="tier-comps-row"></div></div>
@@ -119,12 +119,42 @@
               <div class="tier-badge-block tier-x"><span class="tier-letter">X</span><span class="tier-sublabel">Situational</span></div>
               <div class="tier-pill tier-pill-situational"><div id="tier-x-comps" class="tier-comps-row"></div></div>
             </div>
-            <div class="ad-slot" data-slot="index-foot" data-size="728x90" data-size-mobile="300x250" aria-hidden="true"><span class="ad-slot-label">Advertisement</span><div class="ad-slot-unit"></div></div>
+            <div class="ad-slot" data-slot="index-foot" data-size="728x90" data-size-mobile="300x250" data-web-only aria-hidden="true"><span class="ad-slot-label">Advertisement</span><div class="ad-slot-unit"></div></div>
           </div>
           <aside class="study-column" aria-label="Comp study">
             <div id="comp-study" class="comp-study-panel"></div>
-            <div class="ad-slot" data-slot="study-foot" data-size="300x250" aria-hidden="true"><span class="ad-slot-label">Advertisement</span><div class="ad-slot-unit"></div></div>
+            <div class="ad-slot" data-slot="study-foot" data-size="300x250" data-web-only aria-hidden="true"><span class="ad-slot-label">Advertisement</span><div class="ad-slot-unit"></div></div>
           </aside>
+        </div>
+      </div>
+
+      <!-- Privacy (web only) — reachable from the footer and /privacy/ -->
+      <div id="tab-privacy" class="tab-panel" data-web-only>
+        <div class="content-header">
+          <h2 class="content-title">Privacy</h2>
+          <p class="content-subtitle">What this site keeps, what it loads from others, and how the advertising works. Last revised 16 September 2026. <a href="/" class="footer-link" data-tab="tierlist">Back to the comps</a></p>
+        </div>
+        <div class="prose">
+          <section class="prose-section">
+            <h3 class="study-section-title">What PivotTFT stores</h3>
+            <p>The website has no accounts and no sign-in. It keeps two things in your browser's local storage: your theme choice and a copy of the comps index so the page paints before the network answers. Nothing is sent to us when you read the site.</p>
+          </section>
+          <section class="prose-section">
+            <h3 class="study-section-title">What it loads from others</h3>
+            <p>Champion, item, trait and augment art is loaded from CommunityDragon (<code>raw.communitydragon.org</code>) as you browse, so that host sees the usual request details — your IP address, browser and the image asked for. Fonts are loaded from Google Fonts under the same terms.</p>
+          </section>
+          <section class="prose-section">
+            <h3 class="study-section-title">Advertising</h3>
+            <p>The website is free and supported by advertising. When ads are running they are served by Google AdSense, which uses cookies and similar identifiers to show and measure ads, and may show personalised ads based on your visits to this and other sites. You can manage this in <a href="https://adssettings.google.com/" rel="noopener" target="_blank">Google's Ads Settings</a>, and Google explains how it uses data from partner sites at <a href="https://policies.google.com/technologies/partner-sites" rel="noopener" target="_blank">policies.google.com/technologies/partner-sites</a>. Visitors in the EEA, the UK and Switzerland are asked for consent before personalised ads are served; you can change that choice at any time from the consent message.</p>
+          </section>
+          <section class="prose-section">
+            <h3 class="study-section-title">The Overwolf app</h3>
+            <p>The PivotTFT app for Overwolf reads your own match history through the official Riot Games API when you link a Riot ID, and keeps the results on your machine. Requests pass through our server so the API key stays private; the server does not store your matches. The in-game windows show only the comp you pinned and never read live game data.</p>
+          </section>
+          <section class="prose-section">
+            <h3 class="study-section-title">Contact</h3>
+            <p>Questions about this policy: <a href="mailto:contact@pivottft.com">contact@pivottft.com</a>. PivotTFT was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.</p>
+          </section>
         </div>
       </div>
 
@@ -216,6 +246,7 @@
 
   <footer class="app-disclaimer">
     PivotTFT was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
+    <span class="footer-links" data-web-only> · <a href="/privacy/" class="footer-link" data-tab="privacy">Privacy</a></span>
   </footer>
 </body>
 </html>
