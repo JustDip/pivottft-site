@@ -32,7 +32,7 @@ fi
 
 echo "ship to $HOST"
 tar czf - \
-  index.html 404.html css js img icons \
+  index.html 404.html admin.html css js img icons \
   robots.txt riot.txt manifest.json $( [ -f ads.txt ] && echo ads.txt ) \
   | ssh "$HOST" 'set -e
     rm -rf /opt/pivottft/site.new

@@ -22,12 +22,13 @@ const DIST = join('..', 'PivotTFT', 'dist');
 
 // --- 1. Copy the JS + CSS bundles ------------------------------------------
 let copied = 0;
-const WEB_CSS = new Set(['general.css', 'sidebar.css', 'ingame.css', 'desktop.css', 'mh.css', 'comp-cards.css', 'mobile.css']);
+const WEB_CSS = new Set(['general.css', 'sidebar.css', 'ingame.css', 'desktop.css', 'mh.css', 'comp-cards.css', 'mobile.css', 'admin.css', 'board-editor.css']);
+const WEB_JS = new Set(['desktop.js', 'admin.js']);
 for (const sub of ['js', 'css']) {
   mkdirSync(sub, { recursive: true });
   for (const file of readdirSync(join(DIST, sub))) {
     if (sub === 'css' && !WEB_CSS.has(file)) continue;
-    if (sub === 'js' && file !== 'desktop.js') continue;
+    if (sub === 'js' && !WEB_JS.has(file)) continue;
     copyFileSync(join(DIST, sub, file), join(sub, file));
     copied++;
   }
@@ -113,6 +114,11 @@ html = html.replace(/(href|src)="(css|js|img|icons)\//g, '$1="/$2/');
 
 writeFileSync('index.html', html);
 writeFileSync('404.html', html);
+
+// The comps editor page, served at /admin/ by the site server (not indexed).
+let adminHtml = readFileSync(join(DIST, 'admin.html'), 'utf8');
+adminHtml = adminHtml.replace(/(href|src)="(css|js|img|icons)\//g, '$1="/$2/');
+writeFileSync('admin.html', adminHtml);
 // ads.txt tells buyers which publisher id may sell this site's inventory.
 if (ADS) {
   writeFileSync('ads.txt', `google.com, ${ADSENSE_CLIENT.replace(/^ca-/, '')}, DIRECT, f08c47fec0942fa0\n`);

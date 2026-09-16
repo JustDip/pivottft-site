@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>PivotTFT — Editor</title>
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="/css/board-editor.css" />
+<script defer src="/js/admin.js"></script></head>
+<body class="admin-body">
+  <header class="admin-header">
+    <div class="admin-title">PivotTFT — Editor</div>
+    <div class="admin-user-info">
+      <span id="admin-current-user">…</span>
+      <button id="admin-logout" class="admin-btn admin-btn-ghost" title="Sign out" style="display:none;">Sign out</button>
+      <button id="admin-close" class="admin-close" title="Close">×</button>
+    </div>
+  </header>
+
+  <!-- Sign-in (the website; the app signs in from Settings first) -->
+  <div id="admin-signin" class="admin-signin" style="display:none;">
+    <form id="admin-signin-form" class="admin-signin-form" autocomplete="on">
+      <h2>Sign in to the editor</h2>
+      <p>Moderator or admin account. Comps you publish here appear on the site within a minute.</p>
+      <label class="admin-field">
+        <span>Email</span>
+        <input id="signin-email" type="email" required autocomplete="email" />
+      </label>
+      <label class="admin-field">
+        <span>Password</span>
+        <input id="signin-password" type="password" required autocomplete="current-password" />
+      </label>
+      <div id="signin-error" class="admin-editor-status err"></div>
+      <button id="signin-submit" type="submit" class="admin-btn admin-btn-primary">Sign in</button>
+    </form>
+  </div>
+
+  <!-- Forbidden view (shown if user isn't admin/mod) -->
+  <div id="admin-forbidden" class="admin-forbidden" style="display:none;">
+    <h2>Access denied</h2>
+    <p>You're signed in but your account does not have moderator or admin role. Contact an existing admin to be elevated.</p>
+    <button id="admin-forbidden-close" class="admin-btn admin-btn-primary">Close</button>
+  </div>
+
+  <!-- Main layout -->
+  <main id="admin-main" class="admin-main">
+    <aside class="admin-sidebar">
+      <!-- Comps section -->
+      <div id="admin-section-comps-panel">
+        <div class="admin-sidebar-head">
+          <h3>Comps</h3>
+          <button id="admin-new-comp" class="admin-btn admin-btn-primary" title="New comp">+ New</button>
+        </div>
+        <input id="admin-comp-filter" type="search" class="admin-filter" placeholder="Filter comps…" />
+        <div id="admin-comps-list" class="admin-comps-list"></div>
+      </div>
+
+      <!-- Edition — the set + patch the book is written for -->
+      <div class="admin-edition">
+        <div class="admin-sidebar-head"><h3>Edition</h3></div>
+        <label class="admin-field">
+          <span>Patch label</span>
+          <input id="edition-patch" type="text" maxlength="8" placeholder="18.2b" />
+        </label>
+        <label class="admin-field">
+          <span>Set</span>
+          <input id="edition-set" type="text" disabled />
+        </label>
+        <button id="edition-save" type="button" class="admin-btn">Save edition</button>
+        <div id="edition-status" class="admin-editor-status"></div>
+      </div>
+    </aside>
+
+    <section class="admin-editor">
+      <div id="admin-editor-empty" class="admin-editor-empty">
+        <p>Select a comp from the left, or click <strong>+ New</strong> to create one.</p>
+      </div>
+
+      <form id="admin-editor-form" class="admin-editor-form" style="display:none;">
+        <div class="admin-editor-toolbar">
+          <h2 id="admin-editor-title">Edit comp</h2>
+          <div class="admin-editor-actions">
+            <button id="admin-save" type="submit" class="admin-btn admin-btn-primary">Save</button>
+            <button id="admin-delete" type="button" class="admin-btn admin-btn-danger">Delete</button>
+          </div>
+        </div>
+
+        <div id="admin-editor-status" class="admin-editor-status"></div>
+
+        <div class="admin-fields-grid">
+          <label class="admin-field">
+            <span>ID (lowercase, dashes)</span>
+            <input id="field-id" type="text" required pattern="[a-z0-9\-_]+" maxlength="80" />
+          </label>
+          <label class="admin-field">
+            <span>Name</span>
+            <input id="field-name" type="text" required maxlength="80" />
+          </label>
+          <label class="admin-field">
+            <span>URL slug (lowercase, dashes) — /comps/&lt;slug&gt;/</span>
+            <input id="field-slug" type="text" pattern="[a-z0-9\-]*" maxlength="80" placeholder="auto from name" />
+          </label>
+          <label class="admin-field admin-field-check">
+            <span>Published</span>
+            <input id="field-published" type="checkbox" checked />
+          </label>
+          <label class="admin-field">
+            <span>Tier</span>
+            <select id="field-tier">
+              <option value="S">S</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="X">X</option>
+            </select>
+          </label>
+          <label class="admin-field">
+            <span>Playstyle</span>
+            <select id="field-playstyle">
+              <option value="Standard">Standard</option>
+              <option value="Reroll">Reroll</option>
+              <option value="Fast 8">Fast 8</option>
+              <option value="Fast 9">Fast 9</option>
+              <option value="Flex">Flex</option>
+            </select>
+          </label>
+          <label class="admin-field">
+            <span>Difficulty</span>
+            <select id="field-difficulty">
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </label>
+          <label class="admin-field">
+            <span>Target level</span>
+            <input id="field-level" type="number" min="3" max="11" value="8" />
+          </label>
+        </div>
+
+        <label class="admin-field">
+          <span>Description</span>
+          <textarea id="field-description" rows="3"></textarea>
+        </label>
+
+        <div class="admin-fields-grid">
+          <label class="admin-field">
+            <span>Core traits (comma-separated)</span>
+            <input id="field-core-traits" type="text" placeholder="Mecha, Stargazer" />
+          </label>
+          <label class="admin-field">
+            <span>Recommended augments (comma-separated IDs)</span>
+            <input id="field-augments" type="text" placeholder="DA_18_InfernoTraitAugment, TFT_Augment_MagicRoll" />
+          </label>
+          <label class="admin-field" style="grid-column: 1 / -1;">
+            <span>Alternative comp IDs (comma-separated) — shown as "Related lines" in the study</span>
+            <input id="field-alt-comps" type="text" placeholder="set18-ahri-blossom, set18-riftbeasts" />
+          </label>
+          <label class="admin-field" style="grid-column: 1 / -1;">
+            <span>Tags (comma-separated, e.g. pro, early-patch, reroll, pbe)</span>
+            <input id="field-tags" type="text" placeholder="pro, reroll" />
+          </label>
+        </div>
+
+        <div class="admin-board-editor">
+          <div class="admin-board-head">
+            <span>Board — click a unit, then a hex; click a placed unit to remove it; drag to move</span>
+            <button id="board-sync-units" type="button" class="admin-btn">Sync units from board</button>
+          </div>
+          <div class="admin-board-layout">
+            <div id="admin-roster" class="be-roster" aria-label="Roster"></div>
+            <div id="admin-board" class="hex-board be-board" aria-label="Board"></div>
+          </div>
+        </div>
+
+        <details class="admin-details">
+          <summary>Full unit + items JSON (advanced)</summary>
+          <p class="admin-help">
+            Raw <code>units</code> array. Each unit: <code>{ championId, isCarry, starLevel, items: [] }</code>.
+          </p>
+          <textarea id="field-units" rows="10" class="admin-mono"></textarea>
+        </details>
+
+        <details class="admin-details">
+          <summary>Game-stage tips (optional)</summary>
+          <div class="admin-fields-grid">
+            <label class="admin-field">
+              <span>Early game</span>
+              <textarea id="field-early" rows="2"></textarea>
+            </label>
+            <label class="admin-field">
+              <span>Mid game</span>
+              <textarea id="field-mid" rows="2"></textarea>
+            </label>
+            <label class="admin-field">
+              <span>Late game</span>
+              <textarea id="field-late" rows="2"></textarea>
+            </label>
+            <label class="admin-field">
+              <span>Tips</span>
+              <textarea id="field-tips" rows="2"></textarea>
+            </label>
+          </div>
+        </details>
+      </form>
+
+    </section>
+  </main>
+</body>
+</html>

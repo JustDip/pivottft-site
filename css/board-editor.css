@@ -1,0 +1,171 @@
+/* PivotTFT — Admin board editor (linked only from admin.html).
+   Self-contained: the admin window uses its own plain theme, not the app's
+   token layer. Same 4×7 hex geometry as the study diagram. */
+
+:root {
+  --be-cost-1: #8d95a3;
+  --be-cost-2: #4aa96c;
+  --be-cost-3: #3f8ee3;
+  --be-cost-4: #b563ea;
+  --be-cost-5: #d9a441;
+  --be-hex: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.admin-board-editor {
+  border: 1px solid #2a2a32;
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #1a1a22;
+}
+.admin-board-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #b8b8c0;
+}
+.admin-board-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 12px;
+  align-items: start;
+}
+
+/* ---- Roster: every shop unit, by cost ---- */
+.be-roster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 4px;
+  background: #15151a;
+  border-radius: 4px;
+}
+.be-roster-unit {
+  position: relative;
+  width: 34px;
+  height: 38px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.be-roster-unit .comp-hex-frame {
+  position: absolute;
+  inset: 0;
+  clip-path: var(--be-hex);
+  background: #3a3a44;
+}
+.be-roster-unit.cost-1 .comp-hex-frame { background: var(--be-cost-1); }
+.be-roster-unit.cost-2 .comp-hex-frame { background: var(--be-cost-2); }
+.be-roster-unit.cost-3 .comp-hex-frame { background: var(--be-cost-3); }
+.be-roster-unit.cost-4 .comp-hex-frame { background: var(--be-cost-4); }
+.be-roster-unit.cost-5 .comp-hex-frame { background: var(--be-cost-5); }
+.be-roster-unit .comp-hex-inner {
+  position: absolute;
+  inset: 2px;
+  clip-path: var(--be-hex);
+  background: #15151a;
+  overflow: hidden;
+}
+.be-roster-unit .comp-hex-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.be-roster-unit .comp-hex-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 10px;
+  font-weight: 700;
+  color: #b8b8c0;
+}
+.be-roster-unit.selected .comp-hex-frame {
+  background: #f5b942;
+}
+.be-roster-unit:hover .comp-hex-inner {
+  filter: brightness(1.15);
+}
+
+/* ---- Board: 4 rows × 7 hexes, front line on top ---- */
+.be-board {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 0;
+}
+.be-board .hex-row {
+  display: flex;
+  gap: 4px;
+}
+.be-board .hex-row-offset {
+  margin-left: 22px;
+}
+.be-board .hex-cell {
+  position: relative;
+  width: 40px;
+  height: 46px;
+  clip-path: var(--be-hex);
+  background: #3a3a44;
+  cursor: pointer;
+}
+.be-board .hex-inner {
+  position: absolute;
+  inset: 2px;
+  clip-path: var(--be-hex);
+  background: #15151a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.be-board .hex-cell.be-empty:hover .hex-inner,
+.be-board .hex-cell.drag-over .hex-inner {
+  background: #2a2a32;
+}
+.be-board .hex-cell.drag-over {
+  background: #f5b942;
+}
+.be-board .hex-occupied.cost-1 { background: var(--be-cost-1); }
+.be-board .hex-occupied.cost-2 { background: var(--be-cost-2); }
+.be-board .hex-occupied.cost-3 { background: var(--be-cost-3); }
+.be-board .hex-occupied.cost-4 { background: var(--be-cost-4); }
+.be-board .hex-occupied.cost-5 { background: var(--be-cost-5); }
+.be-board .hex-champ-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.be-board .hex-unit-name {
+  font-size: 10px;
+  font-weight: 700;
+  color: #b8b8c0;
+}
+
+.admin-field-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.admin-field-check input {
+  width: auto;
+}
+.admin-draft {
+  font-style: italic;
+  color: #f5b942;
+  font-size: 11px;
+  margin-left: 4px;
+}
+.admin-edition {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #2a2a32;
+}
+.admin-edition .admin-field {
+  margin-bottom: 8px;
+}
