@@ -4,25 +4,28 @@
 // sibling ../PivotTFT extension repo. It:
 //   1. Copies the built JS + CSS bundles into js/ and css/.
 //   2. Transforms dist/desktop.html into index.html (and 404.html) — swapping
-//      in the public SEO <head> and rewriting asset paths to absolute so deep
-//      links like /comps/<slug>/ resolve correctly.
+//      in the public SEO <head>, stamping <body class="web-mode"> so the
+//      app-only chrome never flashes, and rewriting asset paths to absolute
+//      so deep links like /comps/<slug>/ resolve correctly.
 //
-// This keeps the website a faithful, never-drifting mirror of the app — the
-// website's HTML is no longer hand-maintained.
+// Per-comp titles, descriptions and the sitemap are rendered by the server
+// (proxy/node/site.mjs) from the comps database — nothing to generate here.
 //
-//   node sync-site.mjs
+//   node sync-site.mjs            # ADS=1 node sync-site.mjs → body.ads-on
 
 import { readFileSync, writeFileSync, copyFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { execSync } from 'node:child_process';
 
 const DIST = join('..', 'PivotTFT', 'dist');
 
 // --- 1. Copy the JS + CSS bundles ------------------------------------------
 let copied = 0;
+const WEB_CSS = new Set(['general.css', 'sidebar.css', 'ingame.css', 'desktop.css', 'mh.css', 'comp-cards.css', 'mobile.css']);
 for (const sub of ['js', 'css']) {
   mkdirSync(sub, { recursive: true });
   for (const file of readdirSync(join(DIST, sub))) {
+    if (sub === 'css' && !WEB_CSS.has(file)) continue;
+    if (sub === 'js' && file !== 'desktop.js') continue;
     copyFileSync(join(DIST, sub, file), join(sub, file));
     copied++;
   }
@@ -32,8 +35,8 @@ for (const sub of ['js', 'css']) {
 const HEAD = `<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PivotTFT — TFT Meta Comps, Tier Lists & Stats for Set 17</title>
-  <meta name="description" content="PivotTFT is a free Teamfight Tactics companion: meta comp tier lists, champion and item stats, positioning guides, a team builder, and lobby scouting for TFT Set 17." />
+  <title>TFT Set 18 Comp Tier List | PivotTFT</title>
+  <meta name="description" content="Curated Teamfight Tactics Set 18 team comps — the editors' tier list with boards, build order, items and augments." />
   <link rel="canonical" href="https://www.pivottft.com/" />
   <meta name="theme-color" content="#151518" />
 
@@ -45,15 +48,15 @@ const HEAD = `<head>
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="PivotTFT" />
-  <meta property="og:title" content="PivotTFT — TFT Meta Comps, Tier Lists & Stats" />
-  <meta property="og:description" content="Free Teamfight Tactics companion: meta comp tier lists, champion & item stats, positioning guides, and lobby scouting for Set 17." />
+  <meta property="og:title" content="TFT Set 18 Comp Tier List | PivotTFT" />
+  <meta property="og:description" content="Curated Teamfight Tactics Set 18 team comps — boards, build order, items and augments." />
   <meta property="og:url" content="https://www.pivottft.com/" />
   <meta property="og:image" content="https://www.pivottft.com/img/cool_wolf.png" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PivotTFT — TFT Meta Comps, Tier Lists & Stats" />
-  <meta name="twitter:description" content="Free Teamfight Tactics companion: meta comps, champion & item stats, positioning, and lobby scouting for Set 17." />
+  <meta name="twitter:title" content="TFT Set 18 Comp Tier List | PivotTFT" />
+  <meta name="twitter:description" content="Curated Teamfight Tactics Set 18 team comps — boards, build order, items and augments." />
   <meta name="twitter:image" content="https://www.pivottft.com/img/cool_wolf.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -68,15 +71,18 @@ const HEAD = `<head>
   <script defer src="/js/desktop.js"></script>
 </head>`;
 
+// Body classes the site is born with: web-mode hides the app-only chrome
+// before any script runs; ads-on shows the reserved slots once a network is
+// wired (ADS=1 at build time).
+const BODY_CLASSES = ['desktop', 'web-mode', ...(process.env.ADS === '1' ? ['ads-on'] : [])].join(' ');
+
 // --- 3. Transform desktop.html → index.html + 404.html ---------------------
 let html = readFileSync(join(DIST, 'desktop.html'), 'utf8');
 html = html.replace(/<head>[\s\S]*?<\/head>/, HEAD);
+html = html.replace(/<body class="desktop">/, `<body class="${BODY_CLASSES}">`);
 // Absolute asset paths (safety net — the body carries no relative asset refs).
 html = html.replace(/(href|src)="(css|js|img|icons)\//g, '$1="/$2/');
 
 writeFileSync('index.html', html);
 writeFileSync('404.html', html);
 console.log(`Synced ${copied} bundle files; wrote index.html + 404.html from ${DIST}/desktop.html`);
-
-// --- 4. Regenerate the SSR comp data + sitemap from the PivotTFT source -----
-execSync('node gen-ssr-data.mjs', { stdio: 'inherit' });

@@ -1,22 +1,12 @@
-/* ===== Mobile + Tablet — web-mode only =====
+/* ===== Mobile + tablet — web-mode only =====
  *
- * Two breakpoints:
- *   - tablet   : max-width 900px  (gentler treatment, hides secondary columns)
- *   - phone    : max-width 480px  (aggressive: stacked cards, mini hexes)
- *
- * EVERY rule below is gated on `body.web-mode` so the Overwolf app
- * (always desktop-sized) is completely unaffected.
- *
- * Layout strategy:
- *   - Tablet: sidebar collapses to an off-canvas drawer; hamburger button
- *     in the header opens it. Main content takes full width.
- *   - Phone: same drawer pattern, plus content-tile shrinking, single-column
- *     grids, and horizontal scroll for wide tables / crafting grid.
- *
- * The hamburger button + backdrop are hidden by default (desktop) and only
- * revealed at the tablet breakpoint. */
+ * The Overwolf window never goes below ~1280px; these rules only apply to
+ * the website (body.web-mode). The page keeps the study-book grammar: the
+ * table of contents becomes a drawer, ruled tables re-flow onto two lines,
+ * diagrams scale in whole steps, and nothing ever scrolls sideways.
+ */
 
-/* --- Hamburger button (hidden on desktop) ----------------------------- */
+/* ---- Drawer toggle (hidden on desktop) ---- */
 .mobile-nav-toggle {
   display: none;
   align-items: center;
@@ -25,433 +15,209 @@
   gap: 4px;
   width: 36px;
   height: 36px;
-  margin: 0 6px 0 4px;
+  margin: 0 6px 0 -8px;
   padding: 0;
   background: transparent;
-  border: 1px solid var(--border-default);
-  border-radius: 6px;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-md);
   cursor: pointer;
   -webkit-app-region: no-drag;
 }
 .mobile-nav-toggle-bar {
   display: block;
-  width: 18px;
-  height: 2px;
-  background: var(--text-primary);
-  transition: transform 0.18s ease, opacity 0.18s ease;
+  width: 16px;
+  height: 1.5px;
+  background: var(--ink);
+  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
 }
-.mobile-nav-toggle:hover {
-  background: var(--bg-tertiary);
-}
-.mobile-nav-toggle:focus-visible {
-  outline: 2px solid var(--accent-primary);
-  outline-offset: 1px;
-}
+.mobile-nav-toggle:hover { background: var(--panel); }
+.mobile-nav-toggle:focus-visible { outline: 2px solid var(--mark); outline-offset: 1px; }
+body.mobile-nav-open .mobile-nav-toggle .mobile-nav-toggle-bar:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+body.mobile-nav-open .mobile-nav-toggle .mobile-nav-toggle-bar:nth-child(2) { opacity: 0; }
+body.mobile-nav-open .mobile-nav-toggle .mobile-nav-toggle-bar:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
 
-/* Animated X when drawer is open */
-body.mobile-nav-open .mobile-nav-toggle .mobile-nav-toggle-bar:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
-}
-body.mobile-nav-open .mobile-nav-toggle .mobile-nav-toggle-bar:nth-child(2) {
-  opacity: 0;
-}
-body.mobile-nav-open .mobile-nav-toggle .mobile-nav-toggle-bar:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
-}
-
-/* --- Backdrop (hidden on desktop) ------------------------------------- */
 .mobile-nav-backdrop {
   display: none;
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  z-index: 90;
+  inset: 40px 0 0 0;
+  background: rgba(11, 14, 18, 0.55);
   opacity: 0;
-  transition: opacity 0.2s ease;
   pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out);
+  z-index: 90;
 }
 body.mobile-nav-open .mobile-nav-backdrop {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* ===== Tablet + phone (web-mode only) ================================ */
+/* ===== Tablet + phone ================================================= */
 @media (max-width: 900px) {
   body.web-mode .mobile-nav-toggle { display: inline-flex; }
   body.web-mode .mobile-nav-backdrop { display: block; }
-
-  /* Window-controls are for Overwolf only — pointless in a browser tab. */
   body.web-mode .window-controls-group { display: none; }
+  body.web-mode .app-header { padding: 0 var(--sp-3) 0 var(--sp-4); gap: var(--sp-2); }
+  body.web-mode .app-header .logo-edition { display: none; }
+  body.web-mode .app-header .header-note { font-size: var(--fs-11); }
 
-  /* Off-canvas sidebar: position fixed under the header, slide in/out.
-     We keep `display: flex` (matches the desktop layout) but transform
-     it off-screen until the body opens the drawer. */
+  /* Table of contents as an off-canvas drawer under the running head. */
   body.web-mode .sidebar {
     position: fixed;
-    top: 36px;
+    top: 40px;
     left: 0;
     bottom: 0;
     width: 260px;
     min-width: 260px;
     transform: translateX(-100%);
-    transition: transform 0.22s ease;
+    transition: transform var(--dur-slow) var(--ease-out);
     z-index: 100;
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-lg);
   }
-  body.web-mode.mobile-nav-open .sidebar {
-    transform: translateX(0);
-  }
+  body.web-mode.mobile-nav-open .sidebar { transform: translateX(0); }
 
-  /* Main content takes full width since sidebar is gone from the flow. */
   body.web-mode .app-layout > .main-content,
-  body.web-mode .app-layout > main {
-    width: 100%;
-    min-width: 0;
-  }
+  body.web-mode .app-layout > main { width: 100%; min-width: 0; }
 
-  /* Tab panel padding tightens up. */
-  body.web-mode .tab-panel {
-    padding: 12px;
-  }
-
-  /* The .content-header in desktop.html uses inline `margin: -24px -32px 24px -32px`
-     to extend the header into the tab-panel's padding (so it touches the viewport
-     edges). At narrow widths the -32px overshoots — pull it back in line with the
-     new 12px tab padding. !important is needed because the offending margin is set
-     inline. Same trick repeats for phone padding at the ≤480px breakpoint. */
-  body.web-mode .content-header {
-    margin: -12px -12px 16px -12px !important;
-    padding: 14px 12px;
-  }
-  body.web-mode .content-title { font-size: 18px; }
-  body.web-mode .content-subtitle { font-size: 12px; }
-
-  /* Belt-and-braces: anything that's still wider than the viewport gets clipped
-     here rather than horizontal-scrolling the whole page. The relevant tabs
-     (crafting grid, leaderboard, trends) each opt back into local overflow-x:auto
-     so they remain horizontally scrollable in their own container. */
+  /* Nothing scrolls sideways; wide tables opt back in below. */
   body.web-mode,
   body.web-mode .app-layout,
   body.web-mode .content-area,
-  body.web-mode .tab-panel {
-    overflow-x: hidden;
-    max-width: 100%;
-    min-width: 0;
-  }
+  body.web-mode .tab-panel { overflow-x: hidden; max-width: 100%; min-width: 0; }
 
-  /* Tier-list children: each level needs explicit min-width:0 to let the
-     CSS-grid `minmax(0, 1fr)` cells actually shrink. Without it, the children
-     inherit their content's intrinsic width and overflow. */
+  body.web-mode .tab-panel { padding: var(--sp-4) var(--sp-3) var(--sp-6); }
+  body.web-mode .content-header { margin-bottom: var(--sp-4); }
+  body.web-mode .content-title { font-size: var(--fs-23); }
+  body.web-mode .content-subtitle { font-size: var(--fs-12); }
+
+  /* Toolbars wrap; controls fill the line. */
+  body.web-mode .tierlist-toolbar,
+  body.web-mode .livemeta-toolbar,
+  body.web-mode .stats-filters-toolbar,
+  body.web-mode .tr-toolbar { flex-wrap: wrap; gap: var(--sp-2) var(--sp-3); }
+  body.web-mode .tierlist-controls { margin-left: 0; width: 100%; }
+  body.web-mode .tierlist-search { flex: 1; min-width: 0; }
+  body.web-mode .index-slice { width: 100%; }
+
+  /* Index: the traits column goes, the numbers stay aligned. */
+  body.web-mode #tab-tierlist {
+    --idx-traits: 0px;
+    --idx-tier: 44px;
+    --idx-gap: 8px;
+    --idx-stat-avg: 46px;
+    --idx-stat-top: 50px;
+    --idx-stat-win: 46px;
+    --idx-stat-games: 52px;
+  }
+  body.web-mode .index-head { grid-template-columns: var(--idx-tier) var(--idx-units) minmax(0, 1fr) var(--idx-stat-avg) var(--idx-stat-top) var(--idx-stat-win) var(--idx-stat-games); padding-right: 0; }
+  body.web-mode .index-head-traits,
+  body.web-mode .cr-traits { display: none; }
+  body.web-mode .comp-row { grid-template-columns: var(--idx-units) minmax(0, 1fr) var(--idx-stats); padding-right: 0; }
+  body.web-mode .tier-badge-block .tier-letter { font-size: var(--fs-28); }
+  body.web-mode .tier-badge-block .tier-sublabel { display: none; }
   body.web-mode #tab-tierlist .tier-section,
   body.web-mode #tab-tierlist .tier-comps-row,
   body.web-mode #tab-tierlist .tier-pill,
   body.web-mode .comp-row,
-  body.web-mode .cr-name-block {
-    min-width: 0;
-    max-width: 100%;
-  }
+  body.web-mode .cr-name-block { min-width: 0; max-width: 100%; }
 
-  /* Headings shrink on tablet. */
-  body.web-mode .content-header h1,
-  body.web-mode .content-header h2 {
-    font-size: 18px;
+  /* Live Meta rows: name + carries on one line, the numbers on the next. */
+  body.web-mode .lm-tier-section { grid-template-columns: 44px minmax(0, 1fr); }
+  body.web-mode .lm-comp-card {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    grid-template-areas: "hex name pin" "stats stats stats";
+    row-gap: var(--sp-2);
   }
-  body.web-mode .content-subheader {
-    font-size: 12px;
-  }
+  body.web-mode .lm-comp-card .lm-card-headline { grid-area: hex; }
+  body.web-mode .lm-comp-card .cr-name-block { grid-area: name; }
+  body.web-mode .lm-comp-card .lm-card-traits { display: none; }
+  body.web-mode .lm-comp-card .cr-stats { grid-area: stats; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--sp-2); }
+  body.web-mode .lm-comp-card .cr-stat-cell { text-align: left; }
+  body.web-mode .lm-comp-card .lm-pin-btn { grid-area: pin; }
 
-  /* Logo text contracts so the hamburger + logo fit on narrow headers. */
-  body.web-mode .app-header .logo-text { font-size: 14px; }
-  body.web-mode .app-header .logo-text::after { display: none; }
+  /* Wide tables scroll inside their own box. */
+  body.web-mode .lm-table-wrap,
+  body.web-mode .leaderboard-table-wrap,
+  body.web-mode .crafting-grid-wrapper,
+  body.web-mode .tr-table-wrap,
+  body.web-mode .tbl-grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-  /* Champions grid: drop hex size, allow 2-column traits row wrap. */
-  body.web-mode .champions-cost-units {
-    gap: 8px;
-  }
-  body.web-mode .champion-card {
-    flex-basis: calc(50% - 8px);
-    min-width: 0;
-  }
+  /* Rosters: two per line. */
+  body.web-mode .champion-card { flex-basis: calc(50% - 8px); min-width: 0; }
+  body.web-mode .champions-cost-units { gap: 0 var(--sp-3); }
 
-  /* Live Meta card grid → 2 cols. */
-  body.web-mode .lm-card-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  /* Trends: rails stack. */
+  body.web-mode .tr-rails { grid-template-columns: 1fr; display: grid; }
 
-  /* Items stats panel — name column can shrink further. */
-  body.web-mode .items-stats-row {
-    grid-template-columns: 28px minmax(80px, 1fr) 52px 52px 52px;
-    gap: 6px;
-  }
-  body.web-mode .items-stats-icon img {
-    width: 24px;
-    height: 24px;
-  }
-
-  /* Crafting grid: scroll horizontally rather than squashing 9 columns. */
-  body.web-mode .crafting-grid-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  body.web-mode #crafting-grid {
-    min-width: 560px;
-  }
-
-  /* tierlist-toolbar: the search input has min-width: 220px in comp-cards.css
-     that overflows narrow viewports. Let the toolbar wrap, the search input
-     grow to fit, and the breadcrumb shrink one font-size step. */
-  body.web-mode .tierlist-toolbar {
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 12px;
-    padding-bottom: 10px;
-  }
-  body.web-mode .tierlist-crumb { font-size: 18px; gap: 8px; }
-  body.web-mode .tierlist-controls {
-    flex: 1 1 100%;
-    min-width: 0;
-  }
-  body.web-mode .tierlist-search {
-    min-width: 0;
-    flex: 1 1 auto;
-  }
-
-  /* Comp tier list rows: tighten stats cells so the grid fits, and let the
-     name column shrink further. The CSS at desktop.css:2562 already drops
-     traits at ≤1100px. */
-  body.web-mode .comp-row {
-    grid-template-columns: 56px minmax(0, 1fr) auto;
-    gap: 10px;
-    padding: 8px 10px;
-  }
-  body.web-mode .cr-stats {
-    grid-template-columns: repeat(4, 44px);
-    gap: 4px;
-  }
-  body.web-mode .cr-stat-val { font-size: 12px; }
-  body.web-mode .cr-carry { width: 48px; height: 54px; }
-
-  /* Tier badge (S/A/B/C) — shrink from 96px to fit phones without dwarfing
-     the content. Letter size also drops proportionally. */
-  body.web-mode #tab-tierlist .tier-section { gap: 10px; }
-  body.web-mode #tab-tierlist .tier-comps-row {
-    padding: 10px 12px;
-    min-height: 0;
-  }
-  /* The desktop CSS at comp-cards.css:201 forces `.tier-pill { min-height: 96px }`
-     and `align-items: center`. With `min-height: 0` the pill collapses, then the
-     112px-tall comps-row child overflows the pill (centred → escapes top+bottom).
-     Override the pill to stretch + zero min-height so the pill grows with its
-     content instead. */
-  body.web-mode #tab-tierlist .tier-pill {
-    min-height: 0;
-    align-items: stretch;
-  }
-  body.web-mode .tier-badge-block {
-    width: 70px;
-    min-width: 70px;
-    padding: 8px 4px;
-  }
-  body.web-mode .tier-badge-block .tier-letter { font-size: 44px; letter-spacing: -2px; }
-  body.web-mode .tier-badge-block .tier-sublabel { font-size: 8px; }
-
-  /* Sortable tables — let them scroll horizontally instead of compressing. */
-  body.web-mode .leaderboard-table,
-  body.web-mode .lm-onetricks-table,
-  body.web-mode .trends-table {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* My-snapshots cards: collapse 4-column grid → 1 column. */
-  body.web-mode .my-snapshot-row {
-    grid-template-columns: 1fr;
-    row-gap: 6px;
-  }
-
-  /* Team Builder doesn't work via touch (HTML5 DnD is mouse-only). Replace the
-     interactive area with a friendly notice on tablet+phone. JS is unchanged;
-     this is a pure CSS hide-and-replace. */
-  body.web-mode #tab-teambuilder .teambuilder-layout {
-    display: none;
-  }
-  body.web-mode #tab-teambuilder::after {
-    content: 'Team Builder needs a mouse for drag-and-drop. Open PivotTFT on a desktop for this tab.';
-    display: block;
-    padding: 24px 16px;
-    margin: 16px;
-    background: var(--bg-secondary);
-    border: 1px dashed var(--border-default);
-    border-radius: 8px;
-    color: var(--text-muted);
-    font-size: 13px;
-    text-align: center;
-    line-height: 1.5;
-  }
+  /* Team builder: roster above the board. */
+  body.web-mode #tab-teambuilder .teambuilder-layout { grid-template-columns: 1fr; display: grid; }
 }
 
-/* ===== Phone (≤480px) — aggressive ================================== */
-@media (max-width: 480px) {
-  body.web-mode .sidebar {
-    width: 240px;
-    min-width: 240px;
-  }
+/* ===== Phone ========================================================== */
+@media (max-width: 600px) {
+  body.web-mode .sidebar { width: 84vw; min-width: 0; }
+  body.web-mode .tab-panel { padding: var(--sp-3) var(--sp-3) var(--sp-6); }
+  body.web-mode .content-title { font-size: var(--fs-19); }
 
-  body.web-mode .tab-panel {
-    padding: 8px;
-  }
-  /* Phone: match the negative margin to the new 8px padding (see comment at
-     the ≤900px block above for context). */
-  body.web-mode .content-header {
-    margin: -8px -8px 12px -8px !important;
-    padding: 12px 10px;
-  }
-  body.web-mode .content-title { font-size: 16px; }
-  body.web-mode .content-subtitle { font-size: 11px; }
-
-  /* Champion cards stack one-per-row so the trait pills fit. */
-  body.web-mode .champion-card {
-    flex-basis: 100%;
-  }
-  body.web-mode .champions-cost-label {
-    font-size: 11px;
-  }
-  body.web-mode .comp-hex {
-    width: 48px;
-    height: 56px;
-  }
-
-  /* Live Meta + comp cards → 1 column for legibility. */
-  body.web-mode .lm-card-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* Items stats: ditch the icon column entirely (name carries the meaning). */
-  body.web-mode .items-stats-row {
-    grid-template-columns: minmax(60px, 1fr) 46px 46px 46px;
-    gap: 4px;
-    font-size: 11px;
-  }
-  body.web-mode .items-stats-icon {
-    display: none;
-  }
-  body.web-mode .items-stats-row.items-stats-head .items-stats-name {
-    text-align: left;
-  }
-
-  /* Stats filter toolbar: dropdowns wrap to 2 per row instead of cramped horizontally. */
-  body.web-mode .stats-filters-toolbar {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  body.web-mode .stats-filters-toolbar select {
-    min-width: 0;
-    flex: 1 1 calc(50% - 6px);
-  }
-
-  /* Sub-tab pill rows scroll horizontally to keep all options reachable. */
-  body.web-mode .meta-sub-tabs,
-  body.web-mode .widget-tabs,
-  body.web-mode .nav-tabs {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-
-  /* Match History cards: tighten internal padding so they fit. */
-  body.web-mode .mh-card,
-  body.web-mode .my-snapshots-card {
-    padding: 10px 8px;
-  }
-
-  /* Comp row on phones: drop GAMES (last stat cell), shrink remaining stats.
-     The tier badge below also shrinks to leave room for the actual row. */
+  /* Index rows re-flow: hex + name on the first line, the four numbers with
+     their labels on the second. */
+  body.web-mode .index-head { display: none; }
+  body.web-mode #tab-tierlist .tier-section { gap: var(--sp-2); }
+  body.web-mode #tab-tierlist { --idx-tier: 36px; }
   body.web-mode .comp-row {
-    padding: 8px;
-    font-size: 12px;
-    grid-template-columns: 42px minmax(0, 1fr) auto;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "name" "units" "stats";
+    row-gap: 6px;
   }
-  body.web-mode .cr-name { font-size: 13px; }
-  /* Phone: only AVG + TOP4 fit cleanly alongside the carry hex and name. WIN
-     and GAMES drop out — the value is still in the comp detail panel after
-     clicking through. */
-  body.web-mode .cr-stats {
-    grid-template-columns: repeat(2, 38px);
+  body.web-mode .comp-row .cr-units { grid-area: units; width: auto; }
+  body.web-mode .comp-row .cr-name-block { grid-area: name; }
+  body.web-mode .comp-row .cr-stats { grid-area: stats; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-2); }
+  body.web-mode .comp-row .cr-stat-cell { text-align: left; }
+  body.web-mode #tab-tierlist .comp-row .cr-stat-lbl {
+    display: block;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: var(--track-caps);
+    text-transform: uppercase;
+    color: var(--ink-muted);
   }
-  body.web-mode .cr-stats .cr-stat-cell:nth-child(3),
-  body.web-mode .cr-stats .cr-stat-cell:nth-child(4) { display: none; }
-  body.web-mode .cr-stat-val { font-size: 11px; }
-  body.web-mode .cr-stat-lbl { font-size: 8px; }
-  body.web-mode .cr-carry { width: 40px; height: 46px; }
-  body.web-mode .cr-playstyle { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  body.web-mode .cr-stat-val { font-size: var(--fs-13); }
+  body.web-mode .cr-playstyle { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* Positioning board: the desktop hex grid (5 cells × 64px wide, plus a 35px
-     stagger offset on every other row) measures ~379px which overflows a
-     360px phone viewport. Scale every dimension down ~30% so the 5×4 board
-     fits inside the tab-panel padding. The selectors all use the existing
-     `body.desktop .hex-*` form from desktop.css — we keep that prefix so the
-     specificity beats the desktop rule, and the rules only apply at ≤480px. */
-  body.desktop.web-mode .hex-cell {
-    width: 44px;
-    height: 51px;
-  }
-  body.desktop.web-mode .hex-inner {
-    width: 40px;
-    height: 47px;
-  }
-  body.desktop.web-mode .hex-row { gap: 4px; }
-  body.desktop.web-mode .hex-board { gap: 4px; }
-  body.desktop.web-mode .hex-row-offset { margin-left: 24px; }
-  body.desktop.web-mode .hex-champ-label { font-size: 8px; padding: 1px 4px; }
-  body.desktop.web-mode .hex-unit-name { font-size: 9px; }
+  /* The study prints inline under its row; the diagram scales to fit. */
+  body.web-mode .comp-row-expand.comp-study-panel { padding: var(--sp-3) 0 var(--sp-4); }
+  body.web-mode .study-head { grid-template-columns: 36px minmax(0, 1fr) auto; }
+  body.web-mode .study-tier-letter { font-size: var(--fs-28); }
+  body.web-mode .detail-comp-name { font-size: var(--fs-19); }
+  body.web-mode .study-actions .ui-btn { flex: 1 1 auto; }
+  body.web-mode.desktop .comp-study-panel .hex-cell { width: 38px; height: 44px; }
+  body.web-mode.desktop .comp-study-panel .hex-inner { width: 35px; height: 41px; }
+  body.web-mode.desktop .comp-study-panel .hex-row { gap: 3px; }
+  body.web-mode.desktop .comp-study-panel .hex-board { gap: 3px; }
+  body.web-mode.desktop .comp-study-panel .hex-row-offset { margin-left: 20.5px; }
+  body.web-mode.desktop .comp-study-panel .hex-items img,
+  body.web-mode.desktop .comp-study-panel .hex-items .hex-item-empty { width: 10px; height: 10px; }
+  body.web-mode .comp-study-panel .prog-levels-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body.web-mode .comp-study-panel .prog-stage { grid-template-columns: 1fr; }
+  body.web-mode .study-note { grid-template-columns: 1fr; gap: 4px; }
 
-  /* Phone: stack the tier badge ON TOP of its rows instead of beside. The
-     side-by-side layout doesn't have room for the row content alongside even
-     a 56px badge. As a horizontal pill header it doubles as a clear section
-     divider. */
-  body.web-mode #tab-tierlist .tier-section {
-    flex-direction: column;
-    gap: 4px;
-  }
-  body.web-mode #tab-tierlist .tier-comps-row {
-    padding: 6px 0;
-  }
-  body.web-mode .tier-badge-block {
-    width: 100%;
-    min-width: 0;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 10px;
-    padding: 6px 12px;
-    border-radius: 8px;
-  }
-  body.web-mode .tier-badge-block .tier-letter { font-size: 24px; letter-spacing: -1px; }
-  body.web-mode .tier-badge-block .tier-sublabel { font-size: 9px; letter-spacing: 1px; margin: 0; }
-  body.web-mode .tier-badge-block::after { display: none; }
-  /* No flex override here — tier-section is now column-direction and the pill
-     needs to size to its content's intrinsic height. `flex: 1` from the desktop
-     rule would collapse the pill to 0 (no leftover space in a content-sized
-     column flex parent), so we explicitly reset to auto. */
-  body.web-mode .tier-pill {
-    min-height: 0;
-    border-radius: 10px;
-    flex: 0 0 auto;
-    min-width: 0;
-    width: 100%;
-  }
+  /* Boards elsewhere (Positioning, Team Builder) shrink in whole steps too. */
+  body.web-mode.desktop .hex-cell { width: 44px; height: 51px; }
+  body.web-mode.desktop .hex-inner { width: 41px; height: 48px; }
+  body.web-mode.desktop .hex-row { gap: 4px; }
+  body.web-mode.desktop .hex-board { gap: 4px; }
+  body.web-mode.desktop .hex-row-offset { margin-left: 24px; }
 
-  /* Headings shrink further. */
-  body.web-mode .content-header h1,
-  body.web-mode .content-header h2 {
-    font-size: 16px;
-  }
+  /* Rosters: two per line, smaller marks. */
+  body.web-mode .champion-card { flex-basis: 100%; }
+  body.web-mode .comp-hex { width: 40px; height: 46px; }
 
-  /* Build-path stage timeline scrolls horizontally on phones (each stage is
-     a flex child of fixed minimum width). */
-  body.web-mode .lm-build-path-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+  /* Live Meta numbers: three per line is the floor for legibility. */
+  body.web-mode .lm-comp-card .cr-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body.web-mode .livemeta-subtabs { gap: var(--sp-3); overflow-x: auto; }
+
+  /* Filters stack. */
+  body.web-mode .stats-filters-toolbar,
+  body.web-mode .livemeta-filters { flex-direction: column; align-items: stretch; }
+  body.web-mode .stats-filter-label select,
+  body.web-mode .livemeta-filters select { width: 100%; }
 }

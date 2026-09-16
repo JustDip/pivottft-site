@@ -1,4 +1,4 @@
-/* ===== Unified App Layout ===== */
+/* ===== App layout — the page, its margin, and the table of contents ===== */
 
 html, body {
   margin: 0;
@@ -6,25 +6,25 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  background-color: var(--page);
+  color: var(--ink);
+  font-family: var(--font-ui);
 }
 
 .app-layout {
   display: flex;
   width: 100%;
-  height: calc(100vh - 36px); /* subtract header height */
-  margin-top: 36px;
-  background: var(--bg-primary);
+  height: calc(100vh - 40px); /* the running head is in flow above us */
+  margin-top: 0;
+  background: var(--page);
 }
 
-/* Sidebar */
+/* ---- Table of contents ---- */
 .sidebar {
-  width: 240px;
-  min-width: 240px;
-  background-color: var(--bg-secondary);
-  border-right: 1px solid var(--border-default);
+  width: 232px;
+  min-width: 232px;
+  background-color: var(--margin);
+  border-right: 1px solid var(--rule);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -34,189 +34,218 @@ html, body {
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  padding: 16px 0;
-  gap: 2px;
+  padding: var(--sp-4) 0 var(--sp-3);
   flex: 1;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
-.sidebar-nav::-webkit-scrollbar {
-  width: 4px;
-}
-.sidebar-nav::-webkit-scrollbar-thumb {
-  background: var(--border-hover);
-}
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: var(--rule-strong); }
 
-/* Nav Item */
+/* A chapter line. The active one carries a red pencil tick in the margin. */
 .nav-item {
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 10px 24px;
-  color: var(--text-secondary);
-  font-size: 13px;
+  min-height: 28px;
+  padding: 4px var(--sp-4) 4px var(--sp-5);
+  color: var(--ink-secondary);
+  font-size: var(--fs-13);
   font-weight: 500;
+  line-height: var(--lh-ui);
   cursor: pointer;
   background: transparent;
   border: none;
   text-align: left;
-  transition: all var(--transition-fast);
-  position: relative;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 6px;
+  height: 1.5px;
+  margin-top: -1px;
+  background: var(--mark);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
 .nav-item:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  color: var(--ink);
+  background: var(--panel);
 }
 
 .nav-item.active {
-  color: var(--accent-primary);
+  color: var(--ink);
   font-weight: 600;
-  background: rgba(232, 167, 93, 0.05); /* very subtle highlight */
 }
-
 .nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background-color: var(--accent-primary);
+  transform: scaleX(1);
 }
 
-.nav-icon {
-  width: 20px;
-  text-align: center;
-  margin-right: 12px;
-  font-size: 14px;
-  opacity: 0.7;
+.nav-item:focus-visible {
+  outline-offset: -2px;
+  border-radius: 0;
 }
 
-.nav-item.active .nav-icon {
-  opacity: 1;
-}
+/* Legacy icon span (no longer rendered) */
+.nav-icon { display: none; }
 
-/* Main Content Area */
-.content-area {
-  flex: 1;
-  height: 100%;
-  overflow-y: auto;
-  position: relative;
-  background: var(--bg-primary);
-}
-
-/* Custom Scrollbar for Content */
-.content-area::-webkit-scrollbar {
-  width: 8px;
-}
-.content-area::-webkit-scrollbar-track {
-  background: transparent;
-}
-.content-area::-webkit-scrollbar-thumb {
-  background: var(--border-hover);
-  border-radius: 4px;
-}
-.content-area::-webkit-scrollbar-thumb:hover {
-  background: var(--border-strong);
-}
-
-/* Top Status / Title Bar (Optional per tab) */
-.content-header {
-  padding: 24px 32px;
-  border-bottom: 1px solid var(--border-default);
-  background: var(--bg-secondary);
-}
-
-.content-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  color: var(--text-primary);
-  letter-spacing: -0.5px;
-}
-
-.content-subtitle {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin: 0;
-}
-
-/* Tab Panels */
-.tab-panel {
-  display: none;
-  padding: 24px 32px;
-  animation: fadeIn 0.15s ease;
-}
-
-.tab-panel.active {
-  display: block;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Ad / Sidebar Placeholder (right rail) */
-.content-sidebar {
-  width: 320px;
-  min-width: 320px;
-  border-left: 1px solid var(--border-default);
-  background: var(--bg-secondary);
-  display: none; /* Can be enabled if we want a 3-pane layout */
-}
-
-/* ===== Nav Groups (Stats / Tools dropdowns) ===== */
+/* ---- Section heads (Stats / Tools / Reference) ---- */
 .nav-group {
   display: flex;
   flex-direction: column;
+  margin-top: var(--sp-2);
 }
 
 .nav-group-toggle {
   display: flex;
   align-items: center;
-  padding: 10px 24px;
-  color: var(--text-muted);
-  font-size: 11px;
+  gap: 8px;
+  padding: 6px var(--sp-4) 6px var(--sp-5);
+  color: var(--ink-muted);
+  font-size: var(--fs-11);
   font-weight: 600;
+  letter-spacing: var(--track-caps);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
   cursor: pointer;
   background: transparent;
   border: none;
   text-align: left;
   transition: color var(--transition-fast);
 }
-
 .nav-group-toggle:hover {
-  color: var(--text-primary);
+  color: var(--ink);
+}
+
+/* Section rule runs from the label to the margin, chevron sits on it. */
+.nav-group-toggle::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
 }
 
 .nav-group-chevron {
-  margin-left: auto;
-  font-size: 10px;
-  transition: transform var(--transition-fast);
+  order: 3;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform var(--dur-base) var(--ease-out);
 }
-
 .nav-group.collapsed .nav-group-chevron {
-  transform: rotate(-90deg);
+  transform: rotate(-45deg) translate(-1px, 1px);
 }
 
 .nav-group-items {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  transition: grid-template-rows var(--dur-base) var(--ease-out);
+}
+.nav-group-inner {
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  overflow: hidden;
-  transition: max-height var(--transition-fast);
 }
-
 .nav-group.collapsed .nav-group-items {
-  max-height: 0;
+  grid-template-rows: 0fr;
 }
 
 .nav-item.nav-sub {
-  padding-left: 44px;
-  font-size: 12.5px;
+  padding-left: var(--sp-6);
+  font-size: var(--fs-13);
+}
+.nav-item.nav-sub::before {
+  left: 20px;
+}
+
+/* ---- Colophon at the foot of the contents ---- */
+.sidebar-colophon {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--sp-2) var(--sp-5);
+  border-top: 1px solid var(--rule);
+  font-size: var(--fs-11);
+  color: var(--ink-muted);
+}
+.sidebar-colophon-set {
+  font-weight: 600;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+}
+.sidebar-colophon-note {
+  font-style: italic;
+}
+
+/* ---- The page ---- */
+.content-area {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
+  background: var(--page);
+  scrollbar-gutter: stable;
+}
+
+.content-area::-webkit-scrollbar { width: 8px; }
+.content-area::-webkit-scrollbar-track { background: transparent; }
+.content-area::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 4px; }
+.content-area::-webkit-scrollbar-thumb:hover { background: var(--ink-6); }
+
+/* Chapter title: the heading, a rule, and one italic teaching line. */
+.content-header {
+  margin: 0 0 var(--sp-5);
+  padding: 0 0 var(--sp-3);
+  border-bottom: 1px solid var(--rule-strong);
+  background: transparent;
+}
+
+.content-title {
+  font-size: var(--fs-28);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.01em;
+  margin: 0 0 6px 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.content-subtitle {
+  font-size: var(--fs-13);
+  font-style: italic;
+  color: var(--ink-secondary);
+  margin: 0;
+  max-width: 72ch;
+}
+
+/* Tab panels — a page turn is a quick crossfade, nothing slides. */
+.tab-panel {
+  display: none;
+  padding: var(--sp-6) var(--sp-6) var(--sp-7);
+  animation: page-turn var(--dur-base) var(--ease-out);
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes page-turn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Legacy right rail slot, unused */
+.content-sidebar {
+  display: none;
 }
 
 /* ===== Champions tab ===== */
@@ -253,8 +282,8 @@ html, body {
   padding: 8px 12px;
   background: var(--bg-card);
   border: 1px solid var(--border-default);
-  border-radius: 8px;
-  transition: all var(--transition-fast);
+  border-radius: var(--radius-lg);
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .champion-card:hover {
@@ -294,8 +323,8 @@ html, body {
   font-size: 10px;
   padding: 2px 6px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--panel);
+  border: 1px solid var(--rule);
   color: var(--text-secondary);
   font-weight: 600;
 }
@@ -315,8 +344,8 @@ html, body {
   font-weight: 700;
   color: var(--text-primary);
 }
-.champion-card-stat-avg.good { color: #4ade80; }
-.champion-card-stat-avg.bad  { color: #f87171; }
+.champion-card-stat-avg.good { color: var(--good); }
+.champion-card-stat-avg.bad  { color: var(--ink-secondary); } /* only the good lines get a mark on a full roster */
 .champion-card-stat-pick { color: var(--text-muted); }
 .champion-card-stats-empty,
 .champion-card-stats-loading {
@@ -334,7 +363,7 @@ html, body {
 .trait-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-default);
-  border-left: 3px solid var(--border-default);
+  border-left: 1px solid var(--border-default);
   border-radius: 4px;
   padding: 12px;
   display: flex;
@@ -354,7 +383,7 @@ html, body {
   height: 28px;
   flex-shrink: 0;
   object-fit: contain;
-  background: var(--bg-tertiary, #15151a);
+  background: var(--bg-tertiary, var(--page));
   border-radius: 4px;
   padding: 3px;
   display: inline-flex;
@@ -384,9 +413,9 @@ html, body {
   font-size: 12px;
   font-weight: 700;
   color: var(--accent-primary);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--panel);
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   flex-shrink: 0;
 }
 
@@ -410,40 +439,40 @@ html, body {
   font-weight: 700;
   min-width: 22px;
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   text-align: center;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--panel);
+  border: 1px solid var(--rule);
   color: var(--text-muted);
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
 }
 
 /* Style colors — matches Riot's trait tier convention */
-.trait-bp-bronze    { color: #c08158; border-color: rgba(192, 129, 88, 0.35); }
-.trait-bp-silver    { color: #c4cad6; border-color: rgba(196, 202, 214, 0.35); }
-.trait-bp-gold      { color: #f5b942; border-color: rgba(245, 185, 66, 0.35); }
-.trait-bp-prismatic { color: #f59ed7; border-color: rgba(245, 158, 215, 0.35); }
-.trait-bp-unique    { color: #93c4ff; border-color: rgba(147, 196, 255, 0.35); }
+.trait-bp-bronze    { color: var(--style-bronze); border-color: var(--style-bronze); }
+.trait-bp-silver    { color: var(--ink-secondary); border-color: var(--style-silver); }
+.trait-bp-gold      { color: var(--cost-5); border-color: color-mix(in srgb, var(--cost-5) 35%, transparent); }
+.trait-bp-prismatic { color: var(--style-prismatic); border-color: var(--style-prismatic); }
+.trait-bp-unique    { color: var(--info); border-color: color-mix(in srgb, var(--info) 35%, transparent); }
 
 .trait-bp.is-active,
 .tb-bp-pill.reached { opacity: 1; }
 .trait-bp.is-current,
 .tb-bp-pill.current {
-  color: #ffffff;
+  color: var(--ink);
   border-color: currentColor;
 }
-.trait-bp-bronze.is-current,    .tb-bp-pill.tb-bp-bronze.current    { background: #c08158; color: #1a1a1a; }
-.trait-bp-silver.is-current,    .tb-bp-pill.tb-bp-silver.current    { background: #c4cad6; color: #1a1a1a; }
-.trait-bp-gold.is-current,      .tb-bp-pill.tb-bp-gold.current      { background: #f5b942; color: #1a1a1a; }
-.trait-bp-prismatic.is-current, .tb-bp-pill.tb-bp-prismatic.current { background: #f59ed7; color: #1a1a1a; }
-.trait-bp-unique.is-current,    .tb-bp-pill.tb-bp-unique.current    { background: #93c4ff; color: #1a1a1a; }
+.trait-bp-bronze.is-current,    .tb-bp-pill.tb-bp-bronze.current    { background: var(--style-bronze); color: var(--page); }
+.trait-bp-silver.is-current,    .tb-bp-pill.tb-bp-silver.current    { background: var(--ink-secondary); color: var(--page); }
+.trait-bp-gold.is-current,      .tb-bp-pill.tb-bp-gold.current      { background: var(--cost-5); color: var(--page); }
+.trait-bp-prismatic.is-current, .tb-bp-pill.tb-bp-prismatic.current { background: var(--style-prismatic); color: var(--page); }
+.trait-bp-unique.is-current,    .tb-bp-pill.tb-bp-unique.current    { background: var(--info); color: var(--page); }
 
 /* Active trait card border accent */
-.trait-card-active.trait-active-bronze    { border-left-color: #c08158; }
-.trait-card-active.trait-active-silver    { border-left-color: #c4cad6; }
-.trait-card-active.trait-active-gold      { border-left-color: #f5b942; }
-.trait-card-active.trait-active-prismatic { border-left-color: #f59ed7; }
-.trait-card-active.trait-active-unique    { border-left-color: #93c4ff; }
+.trait-card-active.trait-active-bronze    { border-left-color: var(--style-bronze); }
+.trait-card-active.trait-active-silver    { border-left-color: var(--ink-secondary); }
+.trait-card-active.trait-active-gold      { border-left-color: var(--cost-5); }
+.trait-card-active.trait-active-prismatic { border-left-color: var(--style-prismatic); }
+.trait-card-active.trait-active-unique    { border-left-color: var(--info); }
 
 /* ===== Augments tab ===== */
 .augments-tier-toggle {
@@ -466,7 +495,7 @@ html, body {
   padding: 12px;
   background: var(--bg-card);
   border: 1px solid var(--border-default);
-  border-left: 3px solid var(--border-default);
+  border-left: 1px solid var(--border-default);
   border-radius: 4px;
   transition: border-color var(--transition-fast), background var(--transition-fast);
 }
@@ -475,11 +504,11 @@ html, body {
   background: var(--bg-hover);
 }
 
-.augment-card.aug-silver { border-left-color: #c4cad6; }
-.augment-card.aug-gold { border-left-color: #f5b942; }
+.augment-card.aug-silver { border-left-color: var(--ink-secondary); }
+.augment-card.aug-gold { border-left-color: var(--cost-5); }
 .augment-card.aug-prismatic {
   border-left-color: transparent;
-  border-image: linear-gradient(135deg, #f59ed7, #93c4ff, #f5b942) 1;
+  border-image: linear-gradient(135deg, var(--style-prismatic), var(--info), var(--cost-5)) 1;
 }
 
 .augment-card-icon {
@@ -540,14 +569,9 @@ html, body {
   flex-shrink: 0;
 }
 
-.aug-silver .augment-card-tier { color: #c4cad6; }
-.aug-gold .augment-card-tier { color: #f5b942; }
-.aug-prismatic .augment-card-tier {
-  background: linear-gradient(135deg, #f59ed7, #93c4ff, #f5b942);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+.aug-silver .augment-card-tier { color: var(--ink-secondary); }
+.aug-gold .augment-card-tier { color: var(--cost-5); }
+.aug-prismatic .augment-card-tier { color: var(--style-prismatic); }
 
 .augment-card-desc {
   font-size: 12px;
@@ -581,7 +605,7 @@ html, body {
   padding: 12px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-default);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   justify-content: center;
 }
 
@@ -595,7 +619,7 @@ html, body {
 
 .teambuilder-roster-unit:hover {
   transform: translateY(-2px);
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
+  filter: none;
 }
 
 .teambuilder-roster-unit .comp-hex-frame {
@@ -603,17 +627,17 @@ html, body {
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
-.teambuilder-roster-unit.cost-1 .comp-hex-frame { background: var(--cost-1, #6b7280); }
-.teambuilder-roster-unit.cost-2 .comp-hex-frame { background: var(--cost-2, #1eb854); }
-.teambuilder-roster-unit.cost-3 .comp-hex-frame { background: var(--cost-3, #2f7fff); }
-.teambuilder-roster-unit.cost-4 .comp-hex-frame { background: var(--cost-4, #c44dff); }
-.teambuilder-roster-unit.cost-5 .comp-hex-frame { background: var(--cost-5, #ffb800); }
+.teambuilder-roster-unit.cost-1 .comp-hex-frame { background: var(--cost-1, var(--ink-muted)); }
+.teambuilder-roster-unit.cost-2 .comp-hex-frame { background: var(--cost-2, var(--cost-2)); }
+.teambuilder-roster-unit.cost-3 .comp-hex-frame { background: var(--cost-3, var(--cost-3)); }
+.teambuilder-roster-unit.cost-4 .comp-hex-frame { background: var(--cost-4, var(--cost-4)); }
+.teambuilder-roster-unit.cost-5 .comp-hex-frame { background: var(--cost-5, var(--cost-5)); }
 
 .teambuilder-roster-unit .comp-hex-inner {
   position: absolute;
   inset: 2px;
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  background: var(--bg-tertiary, #1a1a23);
+  background: var(--bg-tertiary, var(--page));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -628,11 +652,11 @@ html, body {
 
 .teambuilder-roster-unit.selected {
   transform: translateY(-3px);
-  filter: drop-shadow(0 0 8px rgba(255, 184, 0, 0.6));
+  filter: none;
 }
 
 .teambuilder-roster-unit.selected .comp-hex-inner {
-  background: rgba(255, 184, 0, 0.12);
+  background: color-mix(in srgb, var(--cost-5) 12%, transparent);
 }
 
 .teambuilder-board-wrap {
@@ -664,24 +688,24 @@ html, body {
   border-radius: 4px;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .teambuilder-clear-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
-  border-color: #ef4444;
+  border-color: var(--bad);
 }
 
 .teambuilder-push-btn {
-  color: #f5b942;
-  border-color: rgba(245, 185, 66, 0.35);
+  color: var(--cost-5);
+  border-color: color-mix(in srgb, var(--cost-5) 35%, transparent);
 }
 
 .teambuilder-push-btn:hover {
-  background: rgba(245, 185, 66, 0.12);
-  color: #ffd97a;
-  border-color: rgba(245, 185, 66, 0.7);
+  background: color-mix(in srgb, var(--cost-5) 12%, transparent);
+  color: var(--cost-5);
+  border-color: color-mix(in srgb, var(--cost-5) 70%, transparent);
 }
 
 .teambuilder-push-btn:disabled {
@@ -695,17 +719,17 @@ html, body {
   font-size: 12px;
   font-weight: 600;
   padding: 8px 12px;
-  background: rgba(245, 185, 66, 0.08);
-  border: 1px solid rgba(245, 185, 66, 0.35);
+  background: color-mix(in srgb, var(--cost-5) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cost-5) 35%, transparent);
   border-radius: 4px;
-  color: #f5b942;
+  color: var(--cost-5);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .detail-lcu-push-btn:hover {
-  background: rgba(245, 185, 66, 0.18);
-  color: #ffd97a;
+  background: color-mix(in srgb, var(--cost-5) 18%, transparent);
+  color: var(--cost-5);
 }
 
 .detail-lcu-push-btn:disabled {
@@ -726,36 +750,40 @@ html, body {
 }
 
 .pivottft-toast {
-  pointer-events: auto;
   min-width: 240px;
-  max-width: 380px;
+  max-width: 360px;
   padding: 10px 14px;
-  background: rgba(20, 20, 28, 0.96);
-  border: 1px solid var(--border-default);
-  border-left: 3px solid var(--border-default);
-  border-radius: 4px;
-  color: var(--text-primary);
-  font-size: 12px;
-  line-height: 1.4;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  background: var(--paper);
+  color: var(--ink-inverse);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: var(--fs-13);
+  line-height: var(--lh-ui);
+  pointer-events: auto;
+  /* Enter fast from the same edge it leaves by (Emil: asymmetric timing,
+     spatial consistency); exit quicker than enter. */
   opacity: 0;
-  transform: translateX(16px);
-  transition: opacity 220ms ease, transform 220ms ease;
+  transform: translateY(8px);
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
 }
-
 .pivottft-toast.show {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0);
 }
-
 .pivottft-toast.hide {
   opacity: 0;
-  transform: translateX(16px);
+  transform: translateY(8px);
+  transition-duration: var(--dur-fast);
 }
-
-.pivottft-toast-success { border-left-color: #22c55e; }
-.pivottft-toast-error   { border-left-color: #ef4444; }
-.pivottft-toast-info    { border-left-color: #f5b942; }
+/* The kind is a mark before the message, not a coloured edge */
+.pivottft-toast::before {
+  font-weight: 700;
+  margin-right: 6px;
+}
+.pivottft-toast-success::before { content: '!'; color: var(--good); }
+.pivottft-toast-error::before   { content: '?!'; color: var(--bad); }
+.pivottft-toast-info::before    { content: '—'; }
 
 .teambuilder-active-traits {
   padding: 12px;
@@ -794,7 +822,7 @@ html, body {
   gap: 10px;
   padding: 6px 4px;
   border-radius: 4px;
-  border-left: 2px solid transparent;
+  border-left: 1px solid transparent;
   padding-left: 8px;
   transition: background var(--transition-fast);
   cursor: default;
@@ -807,7 +835,7 @@ html, body {
   height: 28px;
   flex-shrink: 0;
   object-fit: contain;
-  background: var(--bg-tertiary, #15151a);
+  background: var(--bg-tertiary, var(--page));
   border-radius: 4px;
   padding: 3px;
   display: inline-flex;
@@ -842,18 +870,18 @@ html, body {
   font-size: 10px;
   font-weight: 700;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--panel);
   padding: 1px 6px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   margin-left: auto;
 }
 
 .tb-trait-active .tb-trait-name { color: var(--text-primary); }
-.tb-trait-active.tb-trait-bronze    { border-left-color: #c08158; }
-.tb-trait-active.tb-trait-silver    { border-left-color: #c4cad6; }
-.tb-trait-active.tb-trait-gold      { border-left-color: #f5b942; }
-.tb-trait-active.tb-trait-prismatic { border-left-color: #f59ed7; }
-.tb-trait-active.tb-trait-unique    { border-left-color: #93c4ff; }
+.tb-trait-active.tb-trait-bronze    { border-left-color: var(--style-bronze); }
+.tb-trait-active.tb-trait-silver    { border-left-color: var(--ink-secondary); }
+.tb-trait-active.tb-trait-gold      { border-left-color: var(--cost-5); }
+.tb-trait-active.tb-trait-prismatic { border-left-color: var(--style-prismatic); }
+.tb-trait-active.tb-trait-unique    { border-left-color: var(--info); }
 
 .teambuilder-section-head,
 .teambuilder-board-head .teambuilder-section-title {
@@ -862,16 +890,16 @@ html, body {
 
 /* Board cells — drop target highlight */
 #teambuilder-board .hex-cell.drag-over .hex-inner {
-  background: rgba(245, 185, 66, 0.2);
-  outline: 2px dashed rgba(245, 185, 66, 0.6);
+  background: color-mix(in srgb, var(--cost-5) 20%, transparent);
+  outline: 2px dashed color-mix(in srgb, var(--cost-5) 60%, transparent);
 }
 
 #teambuilder-board .tb-empty .hex-inner {
-  background: var(--bg-tertiary, #15151a);
+  background: var(--page);
 }
 
 #teambuilder-board .tb-cell.tb-empty:hover .hex-inner {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--panel);
 }
 
 #teambuilder-board .hex-occupied {

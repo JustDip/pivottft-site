@@ -5,9 +5,10 @@
 #   cd ../PivotTFT && npm run build      # first, if the app changed
 #   ./deploy-site.sh
 #
-# Runs sync-site.mjs (index.html/404.html + js/ + css/ + SSR JSON + sitemap),
-# then tars the site into /opt/pivottft/site (atomic directory swap) and
-# restarts the server so it picks up the new SSR data.
+# Runs sync-site.mjs (index.html/404.html + js/ + css/), then tars the site
+# into /opt/pivottft/site (atomic directory swap) and restarts the server so
+# it picks up the new shell. Per-comp pages and the sitemap come from the
+# database at request time.
 #
 # This IS the production deploy for www.pivottft.com — pushing this repo to
 # GitHub no longer deploys anything.
@@ -32,8 +33,7 @@ fi
 echo "ship to $HOST"
 tar czf - \
   index.html 404.html css js img icons \
-  functions/_comps.json functions/_champions.json functions/_items.json \
-  robots.txt riot.txt sitemap.xml manifest.json \
+  robots.txt riot.txt manifest.json \
   | ssh "$HOST" 'set -e
     rm -rf /opt/pivottft/site.new
     mkdir -p /opt/pivottft/site.new
@@ -45,4 +45,4 @@ tar czf - \
     rm -rf /opt/pivottft/site.old
     systemctl restart pivottft
     sleep 1
-    curl -sf -o /dev/null http://127.0.0.1:8788/comps/ && echo "site :8788 OK"'
+    curl -sf -o /dev/null http://127.0.0.1:8788/ && echo "site :8788 OK"'
