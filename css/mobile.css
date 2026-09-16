@@ -2,78 +2,16 @@
  *
  * The Overwolf window never goes below ~1280px; these rules only apply to
  * the website (body.web-mode). The page keeps the study-book grammar: the
- * table of contents becomes a drawer, ruled tables re-flow onto two lines,
- * diagrams scale in whole steps, and nothing ever scrolls sideways.
+ * running head tightens, the index re-flows onto two lines, the study prints
+ * inline under its row, diagrams scale in whole steps, and nothing ever
+ * scrolls sideways.
  */
 
-/* ---- Drawer toggle (hidden on desktop) ---- */
-.mobile-nav-toggle {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 4px;
-  width: 36px;
-  height: 36px;
-  margin: 0 6px 0 -8px;
-  padding: 0;
-  background: transparent;
-  border: 1px solid var(--rule-strong);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  -webkit-app-region: no-drag;
-}
-.mobile-nav-toggle-bar {
-  display: block;
-  width: 16px;
-  height: 1.5px;
-  background: var(--ink);
-  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
-}
-.mobile-nav-toggle:hover { background: var(--panel); }
-.mobile-nav-toggle:focus-visible { outline: 2px solid var(--mark); outline-offset: 1px; }
-body.mobile-nav-open .mobile-nav-toggle .mobile-nav-toggle-bar:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
-body.mobile-nav-open .mobile-nav-toggle .mobile-nav-toggle-bar:nth-child(2) { opacity: 0; }
-body.mobile-nav-open .mobile-nav-toggle .mobile-nav-toggle-bar:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
-
-.mobile-nav-backdrop {
-  display: none;
-  position: fixed;
-  inset: 40px 0 0 0;
-  background: rgba(11, 14, 18, 0.55);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur-base) var(--ease-out);
-  z-index: 90;
-}
-body.mobile-nav-open .mobile-nav-backdrop {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ===== Tablet + phone ================================================= */
 @media (max-width: 900px) {
-  body.web-mode .mobile-nav-toggle { display: inline-flex; }
-  body.web-mode .mobile-nav-backdrop { display: block; }
   body.web-mode .window-controls-group { display: none; }
   body.web-mode .app-header { padding: 0 var(--sp-3) 0 var(--sp-4); gap: var(--sp-2); }
   body.web-mode .app-header .logo-edition { display: none; }
   body.web-mode .app-header .header-note { font-size: var(--fs-11); }
-
-  /* Table of contents as an off-canvas drawer under the running head. */
-  body.web-mode .sidebar {
-    position: fixed;
-    top: 40px;
-    left: 0;
-    bottom: 0;
-    width: 260px;
-    min-width: 260px;
-    transform: translateX(-100%);
-    transition: transform var(--dur-slow) var(--ease-out);
-    z-index: 100;
-    box-shadow: var(--shadow-lg);
-  }
-  body.web-mode.mobile-nav-open .sidebar { transform: translateX(0); }
 
   body.web-mode .app-layout > .main-content,
   body.web-mode .app-layout > main { width: 100%; min-width: 0; }
@@ -98,20 +36,10 @@ body.mobile-nav-open .mobile-nav-backdrop {
   body.web-mode .tierlist-search { flex: 1; min-width: 0; }
   body.web-mode .index-slice { width: 100%; }
 
-  /* Index: the traits column goes, the numbers stay aligned. */
   body.web-mode #tab-tierlist {
-    --idx-traits: 0px;
     --idx-tier: 44px;
     --idx-gap: 8px;
-    --idx-stat-avg: 46px;
-    --idx-stat-top: 50px;
-    --idx-stat-win: 46px;
-    --idx-stat-games: 52px;
   }
-  body.web-mode .index-head { grid-template-columns: var(--idx-tier) var(--idx-units) minmax(0, 1fr) var(--idx-stat-avg) var(--idx-stat-top) var(--idx-stat-win) var(--idx-stat-games); padding-right: 0; }
-  body.web-mode .index-head-traits,
-  body.web-mode .cr-traits { display: none; }
-  body.web-mode .comp-row { grid-template-columns: var(--idx-units) minmax(0, 1fr) var(--idx-stats); padding-right: 0; }
   body.web-mode .tier-badge-block .tier-letter { font-size: var(--fs-28); }
   body.web-mode .tier-badge-block .tier-sublabel { display: none; }
   body.web-mode #tab-tierlist .tier-section,
@@ -120,29 +48,6 @@ body.mobile-nav-open .mobile-nav-backdrop {
   body.web-mode .comp-row,
   body.web-mode .cr-name-block { min-width: 0; max-width: 100%; }
 
-  /* Live Meta rows: name + carries on one line, the numbers on the next. */
-  body.web-mode .lm-tier-section { grid-template-columns: 44px minmax(0, 1fr); }
-  body.web-mode .lm-comp-card {
-    grid-template-columns: 44px minmax(0, 1fr) auto;
-    grid-template-areas: "hex name pin" "stats stats stats";
-    row-gap: var(--sp-2);
-  }
-  body.web-mode .lm-comp-card .lm-card-headline { grid-area: hex; }
-  body.web-mode .lm-comp-card .cr-name-block { grid-area: name; }
-  body.web-mode .lm-comp-card .lm-card-traits { display: none; }
-  body.web-mode .lm-comp-card .cr-stats { grid-area: stats; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--sp-2); }
-  body.web-mode .lm-comp-card .cr-stat-cell { text-align: left; }
-  body.web-mode .lm-comp-card .lm-pin-btn { grid-area: pin; }
-
-  /* Wide tables scroll inside their own box. */
-  body.web-mode .lm-table-wrap,
-  body.web-mode .leaderboard-table-wrap,
-  body.web-mode .crafting-grid-wrapper,
-  body.web-mode .tr-table-wrap,
-  body.web-mode .tbl-grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-  /* Rosters: two per line. */
-  body.web-mode .champion-card { flex-basis: calc(50% - 8px); min-width: 0; }
   body.web-mode .champions-cost-units { gap: 0 var(--sp-3); }
 
   /* Trends: rails stack. */
@@ -154,7 +59,6 @@ body.mobile-nav-open .mobile-nav-backdrop {
 
 /* ===== Phone ========================================================== */
 @media (max-width: 600px) {
-  body.web-mode .sidebar { width: 84vw; min-width: 0; }
   body.web-mode .tab-panel { padding: var(--sp-3) var(--sp-3) var(--sp-6); }
   body.web-mode .content-title { font-size: var(--fs-19); }
 
@@ -165,22 +69,11 @@ body.mobile-nav-open .mobile-nav-backdrop {
   body.web-mode #tab-tierlist { --idx-tier: 36px; }
   body.web-mode .comp-row {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "name" "units" "stats";
+    grid-template-areas: "name" "units";
     row-gap: 6px;
   }
   body.web-mode .comp-row .cr-units { grid-area: units; width: auto; }
   body.web-mode .comp-row .cr-name-block { grid-area: name; }
-  body.web-mode .comp-row .cr-stats { grid-area: stats; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-2); }
-  body.web-mode .comp-row .cr-stat-cell { text-align: left; }
-  body.web-mode #tab-tierlist .comp-row .cr-stat-lbl {
-    display: block;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: var(--track-caps);
-    text-transform: uppercase;
-    color: var(--ink-muted);
-  }
-  body.web-mode .cr-stat-val { font-size: var(--fs-13); }
   body.web-mode .cr-playstyle { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* The study prints inline under its row; the diagram scales to fit. */
@@ -207,13 +100,8 @@ body.mobile-nav-open .mobile-nav-backdrop {
   body.web-mode.desktop .hex-board { gap: 4px; }
   body.web-mode.desktop .hex-row-offset { margin-left: 24px; }
 
-  /* Rosters: two per line, smaller marks. */
-  body.web-mode .champion-card { flex-basis: 100%; }
   body.web-mode .comp-hex { width: 40px; height: 46px; }
 
-  /* Live Meta numbers: three per line is the floor for legibility. */
-  body.web-mode .lm-comp-card .cr-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  body.web-mode .livemeta-subtabs { gap: var(--sp-3); overflow-x: auto; }
 
   /* Filters stack. */
   body.web-mode .stats-filters-toolbar,
